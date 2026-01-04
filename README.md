@@ -85,7 +85,37 @@ python examples/03_state_management.py
 
 See [examples/README.md](examples/README.md) for detailed explanations.
 
-### 3. Run the Research Assistant
+### 3. Test Phase 2 Components
+
+Test the core infrastructure:
+
+```python
+# Test configuration
+from research_assistant.config import settings
+print(f"Using model: {settings.ollama_model}")
+print(f"Max sources: {settings.max_sources}")
+
+# Test LLM connection
+from research_assistant.utils.llm import test_llm_connection, get_llm
+if test_llm_connection():
+    print("✅ Ollama is connected!")
+    llm = get_llm()
+    response = llm.invoke("What is LangGraph in one sentence?")
+    print(response)
+
+# Test Source model
+from research_assistant.models.source import Source
+source = Source(
+    url="https://example.com/ai",
+    title="Understanding AI",
+    content="Artificial intelligence is...",
+    trustworthiness_score=87.5
+)
+print(f"Trustworthy: {source.is_trustworthy()}")
+print(f"Domain: {source.get_domain()}")
+```
+
+### 4. Run the Research Assistant (Coming Soon)
 
 ```bash
 # Basic usage
@@ -143,10 +173,11 @@ This project is structured for progressive learning:
   - Project initialization
   - Learning examples
 
-- **Phase 2**: Core Infrastructure
+- **Phase 2**: Core Infrastructure ✅
   - Configuration management
   - Data models
   - LLM utilities
+  - Prompt templates
 
 - **Phase 3**: Individual Tools
   - DuckDuckGo search
@@ -259,9 +290,17 @@ This is a learning project! Contributions welcome:
 
 ## Project Status
 
-🚧 **Phase 1 Complete**: Setup & LangGraph Fundamentals
+✅ **Phase 1 Complete**: Setup & LangGraph Fundamentals
 
-Next: Implementing Phase 2 (Core Infrastructure)
+✅ **Phase 2 Complete**: Core Infrastructure
+
+**Current Progress:**
+- Source data model with Pydantic validation
+- Configuration management with environment variables
+- LLM utilities with Ollama integration
+- Comprehensive prompt templates
+
+**Next**: Implementing Phase 3 (Individual Tools)
 
 ---
 
