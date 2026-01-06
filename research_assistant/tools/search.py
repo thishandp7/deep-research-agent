@@ -14,7 +14,7 @@ def search_duckduckgo(
     query: str,
     max_results: Optional[int] = None,
     region: str = "wt-wt",
-    safesearch: str = "moderate"
+    safesearch: str = "moderate",
 ) -> List[dict]:
     """
     Search DuckDuckGo and return results.
@@ -43,12 +43,9 @@ def search_duckduckgo(
 
     try:
         with DDGS() as ddgs:
-            results = list(ddgs.text(
-                query,
-                region=region,
-                safesearch=safesearch,
-                max_results=max_results
-            ))
+            results = list(
+                ddgs.text(query, region=region, safesearch=safesearch, max_results=max_results)
+            )
             return results
 
     except Exception as e:
@@ -56,9 +53,7 @@ def search_duckduckgo(
 
 
 def search_multiple_queries(
-    queries: List[str],
-    max_results_per_query: Optional[int] = None,
-    deduplicate: bool = True
+    queries: List[str], max_results_per_query: Optional[int] = None, deduplicate: bool = True
 ) -> List[str]:
     """
     Search multiple queries and return unique URLs.
@@ -81,7 +76,7 @@ def search_multiple_queries(
     for query in queries:
         try:
             results = search_duckduckgo(query, max_results=max_results_per_query)
-            urls = [result['href'] for result in results]
+            urls = [result["href"] for result in results]
             all_urls.extend(urls)
 
         except Exception as e:
@@ -116,13 +111,13 @@ def extract_urls_from_results(results: List[dict]) -> List[str]:
         >>> results = search_duckduckgo("python")
         >>> urls = extract_urls_from_results(results)
     """
-    return [result['href'] for result in results]
+    return [result["href"] for result in results]
 
 
 def filter_urls_by_domain(
     urls: List[str],
     allowed_domains: Optional[List[str]] = None,
-    blocked_domains: Optional[List[str]] = None
+    blocked_domains: Optional[List[str]] = None,
 ) -> List[str]:
     """
     Filter URLs by domain whitelist/blacklist.
@@ -189,18 +184,16 @@ class SearchResult:
     @property
     def titles(self) -> List[str]:
         """Get all titles from results"""
-        return [r['title'] for r in self.results]
+        return [r["title"] for r in self.results]
 
     @property
     def snippets(self) -> List[str]:
         """Get all snippets/descriptions from results"""
-        return [r.get('body', '') for r in self.results]
+        return [r.get("body", "") for r in self.results]
 
     def filter_by_domain(
-        self,
-        allowed: Optional[List[str]] = None,
-        blocked: Optional[List[str]] = None
-    ) -> 'SearchResult':
+        self, allowed: Optional[List[str]] = None, blocked: Optional[List[str]] = None
+    ) -> "SearchResult":
         """
         Filter results by domain.
 
@@ -212,12 +205,10 @@ class SearchResult:
             New SearchResult with filtered results
         """
         filtered_urls = filter_urls_by_domain(self.urls, allowed, blocked)
-        filtered_results = [
-            r for r in self.results if r['href'] in filtered_urls
-        ]
+        filtered_results = [r for r in self.results if r["href"] in filtered_urls]
         return SearchResult(filtered_results)
 
-    def limit(self, n: int) -> 'SearchResult':
+    def limit(self, n: int) -> "SearchResult":
         """
         Limit to first n results.
 
@@ -247,7 +238,7 @@ def search_and_get_urls(
     query: str,
     max_results: int = 5,
     allowed_domains: Optional[List[str]] = None,
-    blocked_domains: Optional[List[str]] = None
+    blocked_domains: Optional[List[str]] = None,
 ) -> List[str]:
     """
     Search and get filtered URLs in one call.

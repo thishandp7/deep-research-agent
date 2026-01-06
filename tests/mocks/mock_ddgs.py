@@ -18,7 +18,7 @@ SEARCH_RESULTS_SINGLE: List[dict] = [
     {
         "title": "Artificial Intelligence - Wikipedia",
         "href": "https://en.wikipedia.org/wiki/Artificial_intelligence",
-        "body": "Artificial intelligence (AI) is intelligence demonstrated by machines..."
+        "body": "Artificial intelligence (AI) is intelligence demonstrated by machines...",
     }
 ]
 
@@ -27,28 +27,28 @@ SEARCH_RESULTS_DEFAULT: List[dict] = [
     {
         "title": "Artificial Intelligence - Wikipedia",
         "href": "https://en.wikipedia.org/wiki/Artificial_intelligence",
-        "body": "Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to natural intelligence displayed by animals including humans."
+        "body": "Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to natural intelligence displayed by animals including humans.",
     },
     {
         "title": "What is Artificial Intelligence (AI)? | IBM",
         "href": "https://www.ibm.com/topics/artificial-intelligence",
-        "body": "Artificial intelligence leverages computers and machines to mimic the problem-solving and decision-making capabilities of the human mind."
+        "body": "Artificial intelligence leverages computers and machines to mimic the problem-solving and decision-making capabilities of the human mind.",
     },
     {
         "title": "AI Ethics: Stanford Research",
         "href": "https://stanford.edu/ai-ethics",
-        "body": "Research on ethical considerations in artificial intelligence development and deployment."
+        "body": "Research on ethical considerations in artificial intelligence development and deployment.",
     },
     {
         "title": "MIT - Artificial Intelligence",
         "href": "https://news.mit.edu/topic/artificial-intelligence2",
-        "body": "Latest news and research on artificial intelligence from MIT."
+        "body": "Latest news and research on artificial intelligence from MIT.",
     },
     {
         "title": "Introduction to AI | Google",
         "href": "https://ai.google/education/",
-        "body": "Learn about artificial intelligence fundamentals with Google's educational resources."
-    }
+        "body": "Learn about artificial intelligence fundamentals with Google's educational resources.",
+    },
 ]
 
 
@@ -56,28 +56,20 @@ SEARCH_RESULTS_MANY: List[dict] = SEARCH_RESULTS_DEFAULT + [
     {
         "title": f"AI Article {i}",
         "href": f"https://example{i}.com/ai-article",
-        "body": f"Article {i} about artificial intelligence and machine learning."
+        "body": f"Article {i} about artificial intelligence and machine learning.",
     }
     for i in range(6, 25)  # Total 24 results
 ]
 
 
 SEARCH_RESULTS_DUPLICATE_URLS: List[dict] = [
-    {
-        "title": "AI Article 1",
-        "href": "https://example.com/ai",
-        "body": "First article about AI"
-    },
+    {"title": "AI Article 1", "href": "https://example.com/ai", "body": "First article about AI"},
     {
         "title": "AI Article 2",
         "href": "https://example.com/ai",  # Duplicate URL
-        "body": "Second article with same URL"
+        "body": "Second article with same URL",
     },
-    {
-        "title": "AI Article 3",
-        "href": "https://other.com/ai",
-        "body": "Different URL"
-    }
+    {"title": "AI Article 3", "href": "https://other.com/ai", "body": "Different URL"},
 ]
 
 
@@ -87,32 +79,33 @@ SEARCH_RESULTS_BY_QUERY: dict[str, List[dict]] = {
         {
             "title": "Machine Learning | Stanford",
             "href": "https://stanford.edu/ml",
-            "body": "Introduction to machine learning concepts."
+            "body": "Introduction to machine learning concepts.",
         },
         {
             "title": "Deep Learning Basics",
             "href": "https://deeplearning.ai/basics",
-            "body": "Fundamentals of deep learning and neural networks."
-        }
+            "body": "Fundamentals of deep learning and neural networks.",
+        },
     ],
     "python programming": [
         {
             "title": "Python.org",
             "href": "https://python.org",
-            "body": "Official Python programming language website."
+            "body": "Official Python programming language website.",
         },
         {
             "title": "Learn Python - Codecademy",
             "href": "https://codecademy.com/learn/python",
-            "body": "Interactive Python programming tutorial."
-        }
-    ]
+            "body": "Interactive Python programming tutorial.",
+        },
+    ],
 }
 
 
 # ============================================================================
 # Mock DDGS Implementation
 # ============================================================================
+
 
 class MockDDGS:
     """
@@ -140,7 +133,7 @@ class MockDDGS:
         query: str,
         region: str = "wt-wt",
         safesearch: str = "moderate",
-        max_results: Optional[int] = None
+        max_results: Optional[int] = None,
     ) -> Iterator[dict]:
         """
         Mock text search.
@@ -157,11 +150,7 @@ class MockDDGS:
         # Track call for assertions
         self.call_count += 1
         self.last_query = query
-        self.last_kwargs = {
-            "region": region,
-            "safesearch": safesearch,
-            "max_results": max_results
-        }
+        self.last_kwargs = {"region": region, "safesearch": safesearch, "max_results": max_results}
 
         # Get results based on query
         results = self._get_results_for_query(query)
@@ -222,6 +211,7 @@ class FailingMockDDGS(MockDDGS):
 # Factory Functions
 # ============================================================================
 
+
 def create_mock_ddgs_with_results(results: List[dict]) -> type[MockDDGS]:
     """
     Create a MockDDGS class that returns specific results.
@@ -238,6 +228,7 @@ def create_mock_ddgs_with_results(results: List[dict]) -> type[MockDDGS]:
         >>> with MockClass() as ddgs:
         ...     results = list(ddgs.text("test query"))
     """
+
     class CustomMockDDGS(MockDDGS):
         def _get_results_for_query(self, query: str) -> List[dict]:
             return results.copy()
@@ -262,6 +253,7 @@ def create_mock_ddgs_with_query_map(query_map: dict[str, List[dict]]) -> type[Mo
         ... }
         >>> MockClass = create_mock_ddgs_with_query_map(query_map)
     """
+
     class CustomMockDDGS(MockDDGS):
         def _get_results_for_query(self, query: str) -> List[dict]:
             query_lower = query.lower().strip()

@@ -12,6 +12,7 @@ import hashlib
 # Mock Collection Class
 # ============================================================================
 
+
 class MockCollection:
     """
     Mock ChromaDB Collection.
@@ -40,7 +41,7 @@ class MockCollection:
         documents: List[str],
         metadatas: Optional[List[dict]] = None,
         ids: Optional[List[str]] = None,
-        embeddings: Optional[List[List[float]]] = None
+        embeddings: Optional[List[List[float]]] = None,
     ):
         """
         Add documents to collection.
@@ -91,7 +92,7 @@ class MockCollection:
         query_embeddings: Optional[List[List[float]]] = None,
         n_results: int = 10,
         where: Optional[dict] = None,
-        include: List[str] = ["documents", "metadatas", "distances"]
+        include: List[str] = ["documents", "metadatas", "distances"],
     ) -> dict:
         """
         Query collection for similar documents.
@@ -120,12 +121,7 @@ class MockCollection:
             all_ids = self._filter_by_where(all_ids, where)
 
         # For each query, find matching documents
-        results = {
-            "ids": [],
-            "documents": [],
-            "metadatas": [],
-            "distances": []
-        }
+        results = {"ids": [], "documents": [], "metadatas": [], "distances": []}
 
         for query_text in query_texts:
             # Simple matching: score by text overlap
@@ -160,7 +156,7 @@ class MockCollection:
         ids: Optional[List[str]] = None,
         where: Optional[dict] = None,
         limit: Optional[int] = None,
-        include: List[str] = ["documents", "metadatas"]
+        include: List[str] = ["documents", "metadatas"],
     ) -> dict:
         """
         Get documents by ID or filter.
@@ -191,8 +187,12 @@ class MockCollection:
         # Build results
         results = {
             "ids": result_ids,
-            "documents": [self._documents[doc_id] for doc_id in result_ids] if "documents" in include else [],
-            "metadatas": [self._metadatas[doc_id] for doc_id in result_ids] if "metadatas" in include else [],
+            "documents": (
+                [self._documents[doc_id] for doc_id in result_ids] if "documents" in include else []
+            ),
+            "metadatas": (
+                [self._metadatas[doc_id] for doc_id in result_ids] if "metadatas" in include else []
+            ),
         }
 
         return results
@@ -353,6 +353,7 @@ class MockCollection:
 # Mock Client Class
 # ============================================================================
 
+
 class MockChromaClient:
     """
     Mock ChromaDB Client.
@@ -370,11 +371,7 @@ class MockChromaClient:
         self.settings = settings
         self._collections: Dict[str, MockCollection] = {}
 
-    def create_collection(
-        self,
-        name: str,
-        metadata: Optional[dict] = None
-    ) -> MockCollection:
+    def create_collection(self, name: str, metadata: Optional[dict] = None) -> MockCollection:
         """
         Create a new collection.
 
@@ -414,9 +411,7 @@ class MockChromaClient:
         return self._collections[name]
 
     def get_or_create_collection(
-        self,
-        name: str,
-        metadata: Optional[dict] = None
+        self, name: str, metadata: Optional[dict] = None
     ) -> MockCollection:
         """
         Get or create collection.

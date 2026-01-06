@@ -13,6 +13,7 @@ from research_assistant.models.source import Source
 # Source Assertions
 # ============================================================================
 
+
 def assert_valid_source(source: Source, min_content_length: int = 50):
     """
     Assert that a Source object is valid.
@@ -33,10 +34,12 @@ def assert_valid_source(source: Source, min_content_length: int = 50):
     assert source.url, "URL must not be empty"
     assert source.title, "Title must not be empty"
     assert source.content, "Content must not be empty"
-    assert len(source.content) >= min_content_length, \
-        f"Content too short: {len(source.content)} < {min_content_length}"
-    assert 0 <= source.trustworthiness_score <= 100, \
-        f"Score out of range: {source.trustworthiness_score}"
+    assert (
+        len(source.content) >= min_content_length
+    ), f"Content too short: {len(source.content)} < {min_content_length}"
+    assert (
+        0 <= source.trustworthiness_score <= 100
+    ), f"Score out of range: {source.trustworthiness_score}"
 
 
 def assert_source_trustworthy(source: Source, threshold: float = 85.0):
@@ -55,8 +58,9 @@ def assert_source_trustworthy(source: Source, threshold: float = 85.0):
         >>> source = SourceFactory.create_trustworthy()
         >>> assert_source_trustworthy(source)
     """
-    assert source.is_trustworthy(threshold), \
-        f"Source not trustworthy: {source.trustworthiness_score} < {threshold}"
+    assert source.is_trustworthy(
+        threshold
+    ), f"Source not trustworthy: {source.trustworthiness_score} < {threshold}"
 
 
 def assert_source_untrustworthy(source: Source, threshold: float = 85.0):
@@ -75,8 +79,9 @@ def assert_source_untrustworthy(source: Source, threshold: float = 85.0):
         >>> source = SourceFactory.create_untrustworthy()
         >>> assert_source_untrustworthy(source)
     """
-    assert not source.is_trustworthy(threshold), \
-        f"Source is trustworthy: {source.trustworthiness_score} >= {threshold}"
+    assert not source.is_trustworthy(
+        threshold
+    ), f"Source is trustworthy: {source.trustworthiness_score} >= {threshold}"
 
 
 def assert_sources_equal(source1: Source, source2: Source):
@@ -101,8 +106,7 @@ def assert_sources_equal(source1: Source, source2: Source):
     assert source1.url == source2.url, "URLs don't match"
     assert source1.title == source2.title, "Titles don't match"
     assert source1.content == source2.content, "Content doesn't match"
-    assert source1.trustworthiness_score == source2.trustworthiness_score, \
-        "Scores don't match"
+    assert source1.trustworthiness_score == source2.trustworthiness_score, "Scores don't match"
 
 
 def assert_all_trustworthy(sources: List[Source], threshold: float = 85.0):
@@ -123,8 +127,9 @@ def assert_all_trustworthy(sources: List[Source], threshold: float = 85.0):
     """
     untrustworthy = [s for s in sources if not s.is_trustworthy(threshold)]
 
-    assert not untrustworthy, \
-        f"{len(untrustworthy)} sources below threshold: {[s.url for s in untrustworthy]}"
+    assert (
+        not untrustworthy
+    ), f"{len(untrustworthy)} sources below threshold: {[s.url for s in untrustworthy]}"
 
 
 def assert_source_count(sources: List[Source], expected: int):
@@ -164,13 +169,13 @@ def assert_source_from_domain(source: Source, domain: str):
         >>> assert_source_from_domain(source, "example.com")
     """
     actual_domain = source.get_domain()
-    assert domain in actual_domain, \
-        f"Domain mismatch: expected '{domain}' in '{actual_domain}'"
+    assert domain in actual_domain, f"Domain mismatch: expected '{domain}' in '{actual_domain}'"
 
 
 # ============================================================================
 # URL Assertions
 # ============================================================================
+
 
 def assert_url_list_unique(urls: List[str]):
     """
@@ -187,8 +192,9 @@ def assert_url_list_unique(urls: List[str]):
         >>> assert_url_list_unique(urls)
     """
     unique_urls = set(urls)
-    assert len(unique_urls) == len(urls), \
-        f"Duplicate URLs found: {len(urls)} total, {len(unique_urls)} unique"
+    assert len(unique_urls) == len(
+        urls
+    ), f"Duplicate URLs found: {len(urls)} total, {len(unique_urls)} unique"
 
 
 def assert_url_valid(url: str):
@@ -233,13 +239,15 @@ def assert_urls_from_domain(urls: List[str], domain: str):
 
     for url in urls:
         parsed = urlparse(url)
-        assert domain in parsed.netloc, \
-            f"URL '{url}' not from domain '{domain}' (got: {parsed.netloc})"
+        assert (
+            domain in parsed.netloc
+        ), f"URL '{url}' not from domain '{domain}' (got: {parsed.netloc})"
 
 
 # ============================================================================
 # Search Result Assertions
 # ============================================================================
+
 
 def assert_valid_search_result(result: dict):
     """
@@ -313,6 +321,7 @@ def assert_search_result_count(results: List[dict], expected: int):
 # Vector Store Assertions
 # ============================================================================
 
+
 def assert_query_results_valid(results: dict):
     """
     Assert that vector store query results are valid.
@@ -342,8 +351,7 @@ def assert_query_results_valid(results: dict):
     for key in required_keys:
         assert isinstance(results[key], list), f"'{key}' must be a list"
         if results[key]:
-            assert isinstance(results[key][0], list), \
-                f"'{key}' must be a list of lists"
+            assert isinstance(results[key][0], list), f"'{key}' must be a list of lists"
 
 
 def assert_collection_count(count: int, expected: int):
@@ -367,6 +375,7 @@ def assert_collection_count(count: int, expected: int):
 # Content Assertions
 # ============================================================================
 
+
 def assert_content_length(content: str, min_length: int, max_length: Optional[int] = None):
     """
     Assert that content length is within bounds.
@@ -384,12 +393,10 @@ def assert_content_length(content: str, min_length: int, max_length: Optional[in
     """
     actual = len(content)
 
-    assert actual >= min_length, \
-        f"Content too short: {actual} < {min_length}"
+    assert actual >= min_length, f"Content too short: {actual} < {min_length}"
 
     if max_length is not None:
-        assert actual <= max_length, \
-            f"Content too long: {actual} > {max_length}"
+        assert actual <= max_length, f"Content too long: {actual} > {max_length}"
 
 
 def assert_contains_keywords(text: str, keywords: List[str], case_sensitive: bool = False):
@@ -421,6 +428,7 @@ def assert_contains_keywords(text: str, keywords: List[str], case_sensitive: boo
 # ============================================================================
 # Metadata Assertions
 # ============================================================================
+
 
 def assert_metadata_has_keys(metadata: dict, required_keys: List[str]):
     """
@@ -463,5 +471,4 @@ def assert_timestamp_recent(timestamp: Optional[datetime], max_age_seconds: int 
     age = datetime.now() - timestamp
     max_age = timedelta(seconds=max_age_seconds)
 
-    assert age <= max_age, \
-        f"Timestamp too old: {age.total_seconds()}s > {max_age_seconds}s"
+    assert age <= max_age, f"Timestamp too old: {age.total_seconds()}s > {max_age_seconds}s"

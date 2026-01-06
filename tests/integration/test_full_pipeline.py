@@ -9,12 +9,9 @@ import pytest
 from research_assistant.tools.search import search_duckduckgo, extract_urls_from_results
 from research_assistant.tools.scraper import scrape_multiple_urls
 from research_assistant.tools.vector_store import VectorStore
-from research_assistant.models.source import Source
 from tests.utils.assertions import (
     assert_search_results_valid,
     assert_valid_source,
-    assert_all_trustworthy,
-    assert_query_results_valid
 )
 
 
@@ -22,15 +19,12 @@ from tests.utils.assertions import (
 # TestSearchToScrapeToVector - Full pipeline integration
 # ============================================================================
 
+
 class TestSearchToScrapeToVector:
     """Test full pipeline from search to vector storage."""
 
     def test_search_scrape_store_query_pipeline(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test complete pipeline: search → scrape → store → query."""
         # Step 1: Search
@@ -61,11 +55,7 @@ class TestSearchToScrapeToVector:
         assert len(results) <= 2
 
     def test_trustworthy_sources_pipeline(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test pipeline that filters for trustworthy sources."""
         # Search and scrape
@@ -87,11 +77,7 @@ class TestSearchToScrapeToVector:
         assert len(all_stored) == len(trustworthy_sources)
 
     def test_multiple_searches_aggregated(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test aggregating results from multiple searches."""
         queries = ["AI ethics", "machine learning", "deep learning"]
@@ -112,11 +98,7 @@ class TestSearchToScrapeToVector:
         assert store.count() >= len(queries)
 
     def test_query_retrieves_relevant_content(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test that queries retrieve semantically similar content."""
         # Create sources with specific content
@@ -125,11 +107,10 @@ class TestSearchToScrapeToVector:
         sources = [
             SourceFactory.create(
                 url="https://example.com/ai",
-                content="Artificial intelligence and machine learning applications"
+                content="Artificial intelligence and machine learning applications",
             ),
             SourceFactory.create(
-                url="https://example.com/python",
-                content="Python programming language tutorial"
+                url="https://example.com/python", content="Python programming language tutorial"
             ),
         ]
 
@@ -144,11 +125,7 @@ class TestSearchToScrapeToVector:
         assert len(results) > 0
 
     def test_incremental_source_addition(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test adding sources incrementally over time."""
         store = VectorStore(persist_directory=str(temp_data_dir / "incremental_db"))
@@ -177,15 +154,12 @@ class TestSearchToScrapeToVector:
 # TestErrorHandling - Error handling in pipeline
 # ============================================================================
 
+
 class TestErrorHandling:
     """Test error handling across pipeline stages."""
 
     def test_pipeline_handles_scraping_failures(
-        self,
-        mock_ddgs,
-        monkeypatch,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, monkeypatch, mock_vector_store_full, temp_data_dir
     ):
         """Test that pipeline continues when some URLs fail to scrape."""
         # Setup mock that fails for some URLs
@@ -221,10 +195,7 @@ class TestErrorHandling:
         assert store.count() == len(sources)
 
     def test_empty_search_results_handled(
-        self,
-        mock_ddgs_empty,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs_empty, mock_vector_store_full, temp_data_dir
     ):
         """Test handling of empty search results."""
         # Search returns nothing
@@ -250,15 +221,12 @@ class TestErrorHandling:
 # TestDataFlow - Data consistency across pipeline
 # ============================================================================
 
+
 class TestDataFlow:
     """Test data consistency as it flows through pipeline."""
 
     def test_url_preserved_through_pipeline(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test that URLs are preserved from search to storage."""
         # Search
@@ -279,11 +247,7 @@ class TestDataFlow:
                 assert result["url"] == url
 
     def test_metadata_preserved(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test that metadata is preserved through pipeline."""
         # Search and scrape
@@ -307,16 +271,13 @@ class TestDataFlow:
 # TestPerformance - Basic performance tests
 # ============================================================================
 
+
 @pytest.mark.slow
 class TestPerformance:
     """Basic performance tests for pipeline."""
 
     def test_bulk_operations(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test pipeline with larger batches."""
         # Search
@@ -342,15 +303,12 @@ class TestPerformance:
 # TestRealWorldScenario - Simulate real usage
 # ============================================================================
 
+
 class TestRealWorldScenario:
     """Test scenarios that simulate real-world usage."""
 
     def test_research_topic_workflow(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Simulate researching a topic."""
         topic = "artificial intelligence ethics"
@@ -372,7 +330,7 @@ class TestRealWorldScenario:
         # Store in vector database
         store = VectorStore(
             collection_name="ai_ethics_research",
-            persist_directory=str(temp_data_dir / "research_db")
+            persist_directory=str(temp_data_dir / "research_db"),
         )
         store.add_sources(trustworthy if trustworthy else all_sources)
 
@@ -388,16 +346,11 @@ class TestRealWorldScenario:
         assert isinstance(bias_results, list)
 
     def test_update_existing_research(
-        self,
-        mock_ddgs,
-        mock_newspaper_article,
-        mock_vector_store_full,
-        temp_data_dir
+        self, mock_ddgs, mock_newspaper_article, mock_vector_store_full, temp_data_dir
     ):
         """Test updating existing research with new sources."""
         store = VectorStore(
-            collection_name="ongoing_research",
-            persist_directory=str(temp_data_dir / "ongoing_db")
+            collection_name="ongoing_research", persist_directory=str(temp_data_dir / "ongoing_db")
         )
 
         # Initial research

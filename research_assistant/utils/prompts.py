@@ -26,8 +26,7 @@ Guidelines:
 Generate search queries (one per line):"""
 
 query_generation_prompt = PromptTemplate(
-    input_variables=["topic"],
-    template=QUERY_GENERATION_TEMPLATE
+    input_variables=["topic"], template=QUERY_GENERATION_TEMPLATE
 )
 
 
@@ -66,7 +65,7 @@ Return ONLY a JSON object in this exact format:
 
 trustworthiness_analysis_prompt = PromptTemplate(
     input_variables=["topic", "url", "title", "content_preview"],
-    template=TRUSTWORTHINESS_ANALYSIS_TEMPLATE
+    template=TRUSTWORTHINESS_ANALYSIS_TEMPLATE,
 )
 
 
@@ -93,8 +92,7 @@ Guidelines:
 Executive Summary:"""
 
 report_summary_prompt = PromptTemplate(
-    input_variables=["topic", "num_sources", "sources_summary"],
-    template=REPORT_SUMMARY_TEMPLATE
+    input_variables=["topic", "num_sources", "sources_summary"], template=REPORT_SUMMARY_TEMPLATE
 )
 
 
@@ -113,8 +111,7 @@ Format as a numbered list.
 Key Findings:"""
 
 report_key_findings_prompt = PromptTemplate(
-    input_variables=["topic", "sources_summary"],
-    template=REPORT_KEY_FINDINGS_TEMPLATE
+    input_variables=["topic", "sources_summary"], template=REPORT_KEY_FINDINGS_TEMPLATE
 )
 
 
@@ -129,14 +126,14 @@ Content: {content}
 Summary:"""
 
 content_summary_prompt = PromptTemplate(
-    input_variables=["content"],
-    template=CONTENT_SUMMARY_TEMPLATE
+    input_variables=["content"], template=CONTENT_SUMMARY_TEMPLATE
 )
 
 
 # ============================================================================
 # Helper Functions
 # ============================================================================
+
 
 def format_query_generation_prompt(topic: str) -> str:
     """
@@ -151,12 +148,7 @@ def format_query_generation_prompt(topic: str) -> str:
     return query_generation_prompt.format(topic=topic)
 
 
-def format_trustworthiness_prompt(
-    topic: str,
-    url: str,
-    title: str,
-    content_preview: str
-) -> str:
+def format_trustworthiness_prompt(topic: str, url: str, title: str, content_preview: str) -> str:
     """
     Format trustworthiness analysis prompt.
 
@@ -170,18 +162,11 @@ def format_trustworthiness_prompt(
         Formatted prompt string
     """
     return trustworthiness_analysis_prompt.format(
-        topic=topic,
-        url=url,
-        title=title,
-        content_preview=content_preview
+        topic=topic, url=url, title=title, content_preview=content_preview
     )
 
 
-def format_report_summary_prompt(
-    topic: str,
-    sources_summary: str,
-    num_sources: int
-) -> str:
+def format_report_summary_prompt(topic: str, sources_summary: str, num_sources: int) -> str:
     """
     Format report summary generation prompt.
 
@@ -194,9 +179,7 @@ def format_report_summary_prompt(
         Formatted prompt string
     """
     return report_summary_prompt.format(
-        topic=topic,
-        sources_summary=sources_summary,
-        num_sources=num_sources
+        topic=topic, sources_summary=sources_summary, num_sources=num_sources
     )
 
 
@@ -211,10 +194,7 @@ def format_key_findings_prompt(topic: str, sources_summary: str) -> str:
     Returns:
         Formatted prompt string
     """
-    return report_key_findings_prompt.format(
-        topic=topic,
-        sources_summary=sources_summary
-    )
+    return report_key_findings_prompt.format(topic=topic, sources_summary=sources_summary)
 
 
 # ============================================================================

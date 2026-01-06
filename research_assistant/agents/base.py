@@ -8,7 +8,6 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 from langchain_core.language_models import BaseLLM
 
-from ..config import settings
 from ..utils.llm import get_llm
 
 
@@ -23,7 +22,7 @@ class BaseAgent(ABC):
         self,
         llm: Optional[BaseLLM] = None,
         temperature: Optional[float] = None,
-        verbose: bool = False
+        verbose: bool = False,
     ):
         """
         Initialize base agent.
@@ -78,11 +77,7 @@ class BaseAgent(ABC):
         error_msg = f"{context}: {str(error)}" if context else str(error)
         self.log(error_msg, level="ERROR")
 
-        return {
-            "success": False,
-            "error": error_msg,
-            "error_type": type(error).__name__
-        }
+        return {"success": False, "error": error_msg, "error_type": type(error).__name__}
 
     def create_success_result(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -94,11 +89,7 @@ class BaseAgent(ABC):
         Returns:
             Success dictionary with data
         """
-        return {
-            "success": True,
-            "error": None,
-            **data
-        }
+        return {"success": True, "error": None, **data}
 
     def __repr__(self) -> str:
         """String representation."""

@@ -14,34 +14,27 @@ from research_assistant.tools.scraper import (
     is_valid_url,
     get_content_preview,
     ScrapeResult,
-    scrape_and_validate
+    scrape_and_validate,
 )
 from research_assistant.models.source import Source
 from tests.mocks.mock_requests import (
-    HTML_ARTICLE_GOOD,
     HTML_ARTICLE_MINIMAL,
-    HTML_NO_CONTENT,
     create_mock_requests_get,
-    create_failing_requests_get,
-    create_mock_requests_get_with_retry
 )
 from tests.mocks.mock_newspaper import (
     MockArticle,
-    FailingMockArticle,
-    ParseFailingMockArticle,
-    MinimalContentMockArticle
+    MinimalContentMockArticle,
 )
 from tests.utils.factories import SourceFactory, create_url_list
 from tests.utils.assertions import (
     assert_valid_source,
-    assert_source_from_domain,
-    assert_content_length
 )
 
 
 # ============================================================================
 # TestScrapeUrl - Basic scraping functionality
 # ============================================================================
+
 
 class TestScrapeUrl:
     """Test basic URL scraping functionality."""
@@ -107,7 +100,7 @@ class TestScrapeUrl:
 
     def test_insufficient_content_raises_exception(self, monkeypatch):
         """Test that insufficient content raises exception."""
-        from tests.mocks.mock_requests import create_mock_requests_get, HTML_ARTICLE_MINIMAL
+        from tests.mocks.mock_requests import create_mock_requests_get
 
         monkeypatch.setattr("research_assistant.tools.scraper.Article", MinimalContentMockArticle)
         mock_get = create_mock_requests_get(HTML_ARTICLE_MINIMAL, status_code=200)
@@ -140,6 +133,7 @@ class TestScrapeUrl:
 # TestScrapeMultipleUrls - Batch scraping
 # ============================================================================
 
+
 class TestScrapeMultipleUrls:
     """Test scraping multiple URLs."""
 
@@ -154,6 +148,7 @@ class TestScrapeMultipleUrls:
 
     def test_mixed_success_and_failure(self, monkeypatch):
         """Test scraping with mix of success and failures."""
+
         # Create mock that fails for URLs containing "fail"
         class SelectiveFailMockArticle(MockArticle):
             def download(self):
@@ -178,6 +173,7 @@ class TestScrapeMultipleUrls:
 
     def test_stop_on_first_error(self, monkeypatch):
         """Test that skip_errors=False stops on first error."""
+
         class FailingMockArticle(MockArticle):
             def download(self):
                 raise Exception("Always fails")
@@ -198,6 +194,7 @@ class TestScrapeMultipleUrls:
 
     def test_warnings_printed_for_failures(self, monkeypatch, capsys):
         """Test that warnings are printed for failures."""
+
         class FailingMockArticle(MockArticle):
             def download(self):
                 raise Exception("Download failed")
@@ -215,29 +212,36 @@ class TestScrapeMultipleUrls:
 # TestUtilityFunctions - Helper functions
 # ============================================================================
 
+
 class TestUtilityFunctions:
     """Test utility functions."""
 
-    @pytest.mark.parametrize("url,expected_domain", [
-        ("https://www.example.com/page", "www.example.com"),
-        ("http://github.com/user/repo", "github.com"),
-        ("https://stackoverflow.com/questions/123", "stackoverflow.com"),
-        ("https://subdomain.example.org/path", "subdomain.example.org"),
-    ])
+    @pytest.mark.parametrize(
+        "url,expected_domain",
+        [
+            ("https://www.example.com/page", "www.example.com"),
+            ("http://github.com/user/repo", "github.com"),
+            ("https://stackoverflow.com/questions/123", "stackoverflow.com"),
+            ("https://subdomain.example.org/path", "subdomain.example.org"),
+        ],
+    )
     def test_extract_domain(self, url, expected_domain):
         """Test domain extraction from various URLs."""
         domain = extract_domain(url)
         assert domain == expected_domain
 
-    @pytest.mark.parametrize("url,expected_valid", [
-        ("https://example.com", True),
-        ("http://example.com", True),
-        ("https://example.com/path/to/page", True),
-        ("not a url", False),
-        ("ftp://example.com", True),  # Has scheme and netloc, so valid
-        ("", False),
-        ("example.com", False),  # Missing scheme
-    ])
+    @pytest.mark.parametrize(
+        "url,expected_valid",
+        [
+            ("https://example.com", True),
+            ("http://example.com", True),
+            ("https://example.com/path/to/page", True),
+            ("not a url", False),
+            ("ftp://example.com", True),  # Has scheme and netloc, so valid
+            ("", False),
+            ("example.com", False),  # Missing scheme
+        ],
+    )
     def test_is_valid_url(self, url, expected_valid):
         """Test URL validation."""
         result = is_valid_url(url)
@@ -270,6 +274,7 @@ class TestUtilityFunctions:
 # ============================================================================
 # TestScrapeResult - Wrapper class
 # ============================================================================
+
 
 class TestScrapeResult:
     """Test ScrapeResult wrapper class."""
@@ -360,6 +365,7 @@ class TestScrapeResult:
 # TestScrapeAndValidate - Convenience function
 # ============================================================================
 
+
 class TestScrapeAndValidate:
     """Test scrape_and_validate convenience function."""
 
@@ -401,7 +407,7 @@ class TestScrapeAndValidate:
         # Create article with 70 chars (passes >=50 check but fails >=100 validation)
         ArticleClass = create_mock_article_class_with_content(
             "Short Article",
-            "This content is exactly long enough to pass scraping but too short."  # 70 chars
+            "This content is exactly long enough to pass scraping but too short.",  # 70 chars
         )
         monkeypatch.setattr("research_assistant.tools.scraper.Article", ArticleClass)
 
@@ -411,7 +417,9 @@ class TestScrapeAndValidate:
         captured = capsys.readouterr()
         assert "too short" in captured.out.lower() or "short" in captured.out.lower()
 
-    def test_prints_message_for_scraping_failure(self, mock_newspaper_failing, mock_requests_get_failure, capsys):
+    def test_prints_message_for_scraping_failure(
+        self, mock_newspaper_failing, mock_requests_get_failure, capsys
+    ):
         """Test that message is printed for scraping failure."""
         url = "https://example.com/fail"
         scrape_and_validate(url)
@@ -423,6 +431,7 @@ class TestScrapeAndValidate:
 # ============================================================================
 # TestNewspaperScraping - newspaper3k specific tests
 # ============================================================================
+
 
 class TestNewspaperScraping:
     """Test newspaper3k specific functionality."""
@@ -465,10 +474,13 @@ class TestNewspaperScraping:
 # TestBeautifulSoupScraping - BeautifulSoup fallback tests
 # ============================================================================
 
+
 class TestBeautifulSoupScraping:
     """Test BeautifulSoup fallback functionality."""
 
-    def test_beautifulsoup_extracts_content(self, mock_newspaper_failing, mock_requests_get_success):
+    def test_beautifulsoup_extracts_content(
+        self, mock_newspaper_failing, mock_requests_get_success
+    ):
         """Test that BeautifulSoup extracts content."""
         url = "https://example.com/article"
         source = scrape_url(url, max_retries=0)
@@ -517,11 +529,15 @@ class TestBeautifulSoupScraping:
 # Parametrized Tests
 # ============================================================================
 
-@pytest.mark.parametrize("url", [
-    "https://example.com/article1",
-    "https://test.org/blog/post",
-    "https://news.edu/story",
-])
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://example.com/article1",
+        "https://test.org/blog/post",
+        "https://news.edu/story",
+    ],
+)
 def test_scrape_various_urls(mock_newspaper_article, url):
     """Test scraping various URL patterns."""
     source = scrape_url(url)
@@ -543,10 +559,13 @@ def test_retry_counts(mock_newspaper_article, max_retries):
 # Edge Cases
 # ============================================================================
 
+
 class TestEdgeCases:
     """Test edge cases and error conditions."""
 
-    @pytest.mark.skip(reason="Mock handles empty URL gracefully; test requires real newspaper library")
+    @pytest.mark.skip(
+        reason="Mock handles empty URL gracefully; test requires real newspaper library"
+    )
     def test_empty_url_string(self, mock_newspaper_article):
         """Test scraping with empty URL."""
         with pytest.raises(Exception):
@@ -572,8 +591,7 @@ class TestEdgeCases:
 
         unicode_content = "Content with Unicode: 你好, مرحبا, שלום"
         ArticleClass = create_mock_article_class_with_content(
-            "Unicode Article",
-            unicode_content * 10  # Make it long enough
+            "Unicode Article", unicode_content * 10  # Make it long enough
         )
 
         monkeypatch.setattr("research_assistant.tools.scraper.Article", ArticleClass)

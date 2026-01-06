@@ -31,7 +31,7 @@ class ScraperAgent(BaseAgent):
         verbose: bool = False,
         timeout: Optional[int] = None,
         max_retries: Optional[int] = None,
-        skip_errors: bool = True
+        skip_errors: bool = True,
     ):
         """
         Initialize scraper agent.
@@ -71,7 +71,7 @@ class ScraperAgent(BaseAgent):
                 urls,
                 timeout=self.timeout,
                 max_retries=self.max_retries,
-                skip_errors=self.skip_errors
+                skip_errors=self.skip_errors,
             )
 
             result = ScrapeResult(sources, failed)
@@ -107,11 +107,7 @@ class ScraperAgent(BaseAgent):
         self.log(f"Scraping single URL: {url}")
 
         try:
-            source = scrape_url(
-                url,
-                timeout=self.timeout,
-                max_retries=self.max_retries
-            )
+            source = scrape_url(url, timeout=self.timeout, max_retries=self.max_retries)
             self.log(f"Successfully scraped: {source.title[:50]}...")
             return source
 
@@ -119,12 +115,7 @@ class ScraperAgent(BaseAgent):
             self.log(f"Failed to scrape {url}: {e}", level="ERROR")
             return None
 
-    def run(
-        self,
-        urls: List[str],
-        min_success_rate: float = 0.0,
-        **kwargs
-    ) -> Dict[str, Any]:
+    def run(self, urls: List[str], min_success_rate: float = 0.0, **kwargs) -> Dict[str, Any]:
         """
         Execute scraping workflow: scrape URLs → track results.
 
@@ -151,18 +142,12 @@ class ScraperAgent(BaseAgent):
         try:
             # Validate inputs
             if not urls:
-                return self.handle_error(
-                    ValueError("No URLs provided"),
-                    context="ScraperAgent.run"
-                )
+                return self.handle_error(ValueError("No URLs provided"), context="ScraperAgent.run")
 
             # Remove duplicates while preserving order
             unique_urls = list(dict.fromkeys(urls))
             if len(unique_urls) < len(urls):
-                self.log(
-                    f"Removed {len(urls) - len(unique_urls)} duplicate URLs",
-                    level="INFO"
-                )
+                self.log(f"Removed {len(urls) - len(unique_urls)} duplicate URLs", level="INFO")
 
             # Execute scraping
             result = self.scrape_urls(unique_urls)
@@ -173,26 +158,26 @@ class ScraperAgent(BaseAgent):
             if not success:
                 self.log(
                     f"Success rate {result.success_rate:.1f}% below minimum {min_success_rate}%",
-                    level="WARNING"
+                    level="WARNING",
                 )
 
             # Return structured results
-            return self.create_success_result({
-                "sources": result.sources,
-                "failed_urls": result.failed_urls,
-                "success_count": result.success_count,
-                "failure_count": result.failure_count,
-                "success_rate": result.success_rate,
-                "meets_threshold": success
-            })
+            return self.create_success_result(
+                {
+                    "sources": result.sources,
+                    "failed_urls": result.failed_urls,
+                    "success_count": result.success_count,
+                    "failure_count": result.failure_count,
+                    "success_rate": result.success_rate,
+                    "meets_threshold": success,
+                }
+            )
 
         except Exception as e:
             return self.handle_error(e, context="ScraperAgent.run")
 
     def filter_sources_by_length(
-        self,
-        sources: List[Source],
-        min_length: int = 100
+        self, sources: List[Source], min_length: int = 100
     ) -> List[Source]:
         """
         Filter sources by content length.
@@ -241,7 +226,7 @@ class ScraperAgent(BaseAgent):
                 "min_content_length": 0,
                 "max_content_length": 0,
                 "total_words": 0,
-                "domains": []
+                "domains": [],
             }
 
         content_lengths = [len(s.content) for s in sources]
@@ -254,5 +239,5 @@ class ScraperAgent(BaseAgent):
             "max_content_length": max(content_lengths),
             "total_words": sum(s.metadata.get("word_count", 0) for s in sources),
             "domains": domains,
-            "domain_count": len(domains)
+            "domain_count": len(domains),
         }

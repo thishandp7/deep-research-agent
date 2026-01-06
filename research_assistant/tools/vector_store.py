@@ -24,7 +24,7 @@ class VectorStore:
         self,
         collection_name: str = "research_sources",
         persist_directory: Optional[str] = None,
-        embedding_model: Optional[str] = None
+        embedding_model: Optional[str] = None,
     ):
         """
         Initialize vector store.
@@ -44,15 +44,13 @@ class VectorStore:
         self.embedding_model_name = embedding_model or settings.embedding_model
 
         # Initialize ChromaDB client
-        self.client = chromadb.Client(ChromaSettings(
-            persist_directory=self.persist_directory,
-            anonymized_telemetry=False
-        ))
+        self.client = chromadb.Client(
+            ChromaSettings(persist_directory=self.persist_directory, anonymized_telemetry=False)
+        )
 
         # Get or create collection
         self.collection = self.client.get_or_create_collection(
-            name=self.collection_name,
-            metadata={"description": "Research assistant source storage"}
+            name=self.collection_name, metadata={"description": "Research assistant source storage"}
         )
 
         # Initialize embedding model
@@ -95,31 +93,26 @@ class VectorStore:
             documents.append(source.content)
 
             # Store metadata
-            metadatas.append({
-                "url": source.url,
-                "title": source.title,
-                "trustworthiness_score": source.trustworthiness_score,
-                "domain": source.get_domain(),
-                "scraped_at": str(source.scraped_at) if source.scraped_at else None,
-                **source.metadata  # Include additional metadata
-            })
+            metadatas.append(
+                {
+                    "url": source.url,
+                    "title": source.title,
+                    "trustworthiness_score": source.trustworthiness_score,
+                    "domain": source.get_domain(),
+                    "scraped_at": str(source.scraped_at) if source.scraped_at else None,
+                    **source.metadata,  # Include additional metadata
+                }
+            )
 
             # Use URL as unique ID (hash if too long)
             doc_id = self._generate_id(source.url)
             ids.append(doc_id)
 
         # Add to collection
-        self.collection.add(
-            documents=documents,
-            metadatas=metadatas,
-            ids=ids
-        )
+        self.collection.add(documents=documents, metadatas=metadatas, ids=ids)
 
     def query_similar(
-        self,
-        query: str,
-        n_results: int = 5,
-        min_score: Optional[float] = None
+        self, query: str, n_results: int = 5, min_score: Optional[float] = None
     ) -> List[dict]:
         """
         Query for similar sources using semantic search.
@@ -143,20 +136,16 @@ class VectorStore:
             where = {"trustworthiness_score": {"$gte": min_score}}
 
         # Query collection
-        results = self.collection.query(
-            query_texts=[query],
-            n_results=n_results,
-            where=where
-        )
+        results = self.collection.query(query_texts=[query], n_results=n_results, where=where)
 
         # Format results
         formatted = []
-        if results['metadatas']:
-            for i, metadata in enumerate(results['metadatas'][0]):
+        if results["metadatas"]:
+            for i, metadata in enumerate(results["metadatas"][0]):
                 result = {
                     **metadata,
-                    "document": results['documents'][0][i] if results['documents'] else "",
-                    "distance": results['distances'][0][i] if results['distances'] else None
+                    "document": results["documents"][0][i] if results["documents"] else "",
+                    "distance": results["distances"][0][i] if results["distances"] else None,
                 }
                 formatted.append(result)
 
@@ -180,10 +169,10 @@ class VectorStore:
         try:
             result = self.collection.get(ids=[doc_id])
 
-            if result['metadatas']:
+            if result["metadatas"]:
                 return {
-                    **result['metadatas'][0],
-                    "document": result['documents'][0] if result['documents'] else ""
+                    **result["metadatas"][0],
+                    "document": result["documents"][0] if result["documents"] else "",
                 }
 
             return None
@@ -192,9 +181,7 @@ class VectorStore:
             return None
 
     def get_trustworthy_sources(
-        self,
-        threshold: float = 85.0,
-        limit: Optional[int] = None
+        self, threshold: float = 85.0, limit: Optional[int] = None
     ) -> List[dict]:
         """
         Get all sources above trustworthiness threshold.
@@ -212,18 +199,14 @@ class VectorStore:
         """
         where = {"trustworthiness_score": {"$gte": threshold}}
 
-        result = self.collection.get(
-            where=where,
-            limit=limit
-        )
+        result = self.collection.get(where=where, limit=limit)
 
         formatted = []
-        if result['metadatas']:
-            for i, metadata in enumerate(result['metadatas']):
-                formatted.append({
-                    **metadata,
-                    "document": result['documents'][i] if result['documents'] else ""
-                })
+        if result["metadatas"]:
+            for i, metadata in enumerate(result["metadatas"]):
+                formatted.append(
+                    {**metadata, "document": result["documents"][i] if result["documents"] else ""}
+                )
 
         return formatted
 
@@ -272,8 +255,7 @@ class VectorStore:
         """
         self.client.delete_collection(self.collection_name)
         self.collection = self.client.create_collection(
-            name=self.collection_name,
-            metadata={"description": "Research assistant source storage"}
+            name=self.collection_name, metadata={"description": "Research assistant source storage"}
         )
 
     def get_statistics(self) -> dict:
@@ -297,7 +279,7 @@ class VectorStore:
             "trustworthy_count": len(trustworthy),
             "collection_name": self.collection_name,
             "persist_directory": self.persist_directory,
-            "embedding_model": self.embedding_model_name
+            "embedding_model": self.embedding_model_name,
         }
 
     def _generate_id(self, url: str) -> str:
@@ -320,20 +302,16 @@ class VectorStore:
             return hashlib.md5(url.encode()).hexdigest()
 
         # Otherwise use URL directly (cleaned)
-        return url.replace('/', '_').replace(':', '_')[:200]
+        return url.replace("/", "_").replace(":", "_")[:200]
 
     def __repr__(self) -> str:
         """String representation"""
-        return (
-            f"VectorStore(collection='{self.collection_name}', "
-            f"sources={self.count()})"
-        )
+        return f"VectorStore(collection='{self.collection_name}', " f"sources={self.count()})"
 
 
 # Convenience function
 def create_vector_store(
-    collection_name: str = "research_sources",
-    persist_directory: Optional[str] = None
+    collection_name: str = "research_sources", persist_directory: Optional[str] = None
 ) -> VectorStore:
     """
     Create a new vector store instance.
@@ -348,10 +326,7 @@ def create_vector_store(
     Example:
         >>> store = create_vector_store("my_research")
     """
-    return VectorStore(
-        collection_name=collection_name,
-        persist_directory=persist_directory
-    )
+    return VectorStore(collection_name=collection_name, persist_directory=persist_directory)
 
 
 # Global default store instance

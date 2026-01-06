@@ -20,6 +20,7 @@ from langgraph.graph import StateGraph, END
 # Step 1: Define the state schema
 class RoutingState(TypedDict):
     """State for conditional routing example"""
+
     content: str
     quality_score: int
     path_taken: str
@@ -51,7 +52,7 @@ def approve_content(state: RoutingState) -> dict:
     Handle high-quality content.
     """
     print(f"✅ Content APPROVED (score: {state['quality_score']})")
-    print(f"   Content meets quality standards!")
+    print("   Content meets quality standards!")
 
     return {
         "is_approved": True,
@@ -64,7 +65,7 @@ def reject_content(state: RoutingState) -> dict:
     Handle low-quality content.
     """
     print(f"❌ Content REJECTED (score: {state['quality_score']})")
-    print(f"   Content needs improvement.")
+    print("   Content needs improvement.")
 
     return {
         "is_approved": False,
@@ -77,7 +78,7 @@ def needs_review(state: RoutingState) -> dict:
     Handle medium-quality content that needs human review.
     """
     print(f"⚠️  Content needs HUMAN REVIEW (score: {state['quality_score']})")
-    print(f"   Quality is borderline.")
+    print("   Quality is borderline.")
 
     return {
         "is_approved": False,
@@ -99,13 +100,13 @@ def route_based_on_quality(state: RoutingState) -> Literal["approve", "reject", 
     print(f"\n🔀 Routing decision for score {score}:")
 
     if score >= 80:
-        print(f"   → Route to APPROVE (score >= 80)")
+        print("   → Route to APPROVE (score >= 80)")
         return "approve"
     elif score >= 50:
-        print(f"   → Route to REVIEW (50 <= score < 80)")
+        print("   → Route to REVIEW (50 <= score < 80)")
         return "review"
     else:
-        print(f"   → Route to REJECT (score < 50)")
+        print("   → Route to REJECT (score < 50)")
         return "reject"
 
 
@@ -159,7 +160,8 @@ if __name__ == "__main__":
     print("─" * 60)
 
     state1: RoutingState = {
-        "content": "This is a very long and comprehensive article about artificial intelligence " * 5,
+        "content": "This is a very long and comprehensive article about artificial intelligence "
+        * 5,
         "quality_score": 0,
         "path_taken": "",
         "is_approved": False,

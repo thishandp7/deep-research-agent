@@ -4,7 +4,6 @@ Configuration management for the research assistant.
 Loads settings from environment variables with sensible defaults.
 """
 
-import os
 from pathlib import Path
 from typing import Literal
 from pydantic import Field
@@ -38,86 +37,61 @@ class Settings(BaseSettings):
 
     # Ollama Configuration
     ollama_base_url: str = Field(
-        default="http://localhost:11434",
-        description="Ollama API base URL"
+        default="http://localhost:11434", description="Ollama API base URL"
     )
 
-    ollama_model: str = Field(
-        default="llama3.2:3b",
-        description="Default Ollama model to use"
-    )
+    ollama_model: str = Field(default="llama3.2:3b", description="Default Ollama model to use")
 
     ollama_temperature: float = Field(
         default=0.7,
         ge=0.0,
         le=2.0,
-        description="LLM temperature (0.0 = deterministic, 2.0 = very random)"
+        description="LLM temperature (0.0 = deterministic, 2.0 = very random)",
     )
 
     # Research Configuration
     max_sources: int = Field(
-        default=10,
-        ge=1,
-        le=50,
-        description="Maximum number of sources to discover"
+        default=10, ge=1, le=50, description="Maximum number of sources to discover"
     )
 
     trustworthiness_threshold: float = Field(
-        default=85.0,
-        ge=0.0,
-        le=100.0,
-        description="Minimum trustworthiness score to store sources"
+        default=85.0, ge=0.0, le=100.0, description="Minimum trustworthiness score to store sources"
     )
 
     max_search_results_per_query: int = Field(
-        default=5,
-        ge=1,
-        le=20,
-        description="Maximum search results per query"
+        default=5, ge=1, le=20, description="Maximum search results per query"
     )
 
     # Paths
     vector_db_path: Path = Field(
-        default=Path("./data/vector_db"),
-        description="ChromaDB persistence directory"
+        default=Path("./data/vector_db"), description="ChromaDB persistence directory"
     )
 
     reports_path: Path = Field(
-        default=Path("./data/reports"),
-        description="Directory for generated reports"
+        default=Path("./data/reports"), description="Directory for generated reports"
     )
 
     # Scraping Configuration
     scraper_timeout: int = Field(
-        default=10,
-        ge=1,
-        le=60,
-        description="Timeout for web scraping requests (seconds)"
+        default=10, ge=1, le=60, description="Timeout for web scraping requests (seconds)"
     )
 
     scraper_max_retries: int = Field(
-        default=2,
-        ge=0,
-        le=5,
-        description="Maximum retries for failed scrapes"
+        default=2, ge=0, le=5, description="Maximum retries for failed scrapes"
     )
 
     # Embedding Configuration
     embedding_model: str = Field(
-        default="all-MiniLM-L6-v2",
-        description="Sentence transformer model for embeddings"
+        default="all-MiniLM-L6-v2", description="Sentence transformer model for embeddings"
     )
 
     # Logging
     log_level: str = Field(
-        default="INFO",
-        description="Logging level (DEBUG, INFO, WARNING, ERROR)"
+        default="INFO", description="Logging level (DEBUG, INFO, WARNING, ERROR)"
     )
 
     model_config = SettingsConfigDict(
-        env_file = ".env",
-        env_file_encoding = "utf-8",
-        case_sensitive = False  # Allow lowercase env vars
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=False  # Allow lowercase env vars
     )
 
     def ensure_directories(self) -> None:

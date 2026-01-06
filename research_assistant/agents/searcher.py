@@ -10,7 +10,6 @@ from langchain_core.language_models import BaseLLM
 from .base import BaseAgent
 from ..tools.search import search_multiple_queries, search_duckduckgo
 from ..utils.prompts import QUERY_GENERATION_TEMPLATE
-from ..config import settings
 
 
 class SearcherAgent(BaseAgent):
@@ -29,7 +28,7 @@ class SearcherAgent(BaseAgent):
         temperature: float = 0.7,
         verbose: bool = False,
         max_queries: int = 5,
-        max_results_per_query: int = 10
+        max_results_per_query: int = 10,
     ):
         """
         Initialize searcher agent.
@@ -65,29 +64,26 @@ class SearcherAgent(BaseAgent):
 
         try:
             # Format prompt
-            prompt = QUERY_GENERATION_TEMPLATE.format(
-                topic=topic,
-                max_queries=self.max_queries
-            )
+            prompt = QUERY_GENERATION_TEMPLATE.format(topic=topic, max_queries=self.max_queries)
 
             # Get LLM response
             response = self.llm.invoke(prompt)
 
             # Extract content from response
-            if hasattr(response, 'content'):
+            if hasattr(response, "content"):
                 text = response.content
             else:
                 text = str(response)
 
             # Parse queries from response (assumes one per line)
             queries = [
-                line.strip().lstrip('123456789.-) ')
-                for line in text.strip().split('\n')
-                if line.strip() and not line.strip().startswith('#')
+                line.strip().lstrip("123456789.-) ")
+                for line in text.strip().split("\n")
+                if line.strip() and not line.strip().startswith("#")
             ]
 
             # Limit to max_queries
-            queries = queries[:self.max_queries]
+            queries = queries[: self.max_queries]
 
             # Fallback: use topic itself if no queries generated
             if not queries:
@@ -121,9 +117,7 @@ class SearcherAgent(BaseAgent):
 
         try:
             urls = search_multiple_queries(
-                queries,
-                max_results_per_query=self.max_results_per_query,
-                deduplicate=True
+                queries, max_results_per_query=self.max_results_per_query, deduplicate=True
             )
 
             self.log(f"Discovered {len(urls)} unique URLs")
@@ -133,12 +127,7 @@ class SearcherAgent(BaseAgent):
             self.log(f"Error during search: {e}", level="ERROR")
             return []
 
-    def run(
-        self,
-        topic: str,
-        queries: Optional[List[str]] = None,
-        **kwargs
-    ) -> Dict[str, Any]:
+    def run(self, topic: str, queries: Optional[List[str]] = None, **kwargs) -> Dict[str, Any]:
         """
         Execute search workflow: generate queries → search → collect URLs.
 
@@ -170,11 +159,9 @@ class SearcherAgent(BaseAgent):
             urls = self.search_urls(queries)
 
             # Return results
-            return self.create_success_result({
-                "queries": queries,
-                "urls": urls,
-                "url_count": len(urls)
-            })
+            return self.create_success_result(
+                {"queries": queries, "urls": urls, "url_count": len(urls)}
+            )
 
         except Exception as e:
             return self.handle_error(e, context="SearcherAgent.run")
@@ -196,7 +183,7 @@ class SearcherAgent(BaseAgent):
         """
         try:
             results = search_duckduckgo(query, max_results=max_results)
-            return [r['href'] for r in results]
+            return [r["href"] for r in results]
         except Exception as e:
             self.log(f"Simple search failed: {e}", level="ERROR")
             return []

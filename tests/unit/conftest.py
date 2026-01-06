@@ -13,6 +13,7 @@ from pathlib import Path
 # Data Fixtures
 # ============================================================================
 
+
 @pytest.fixture
 def sample_source():
     """
@@ -33,7 +34,7 @@ def sample_source():
             "authors": ["Test Author"],
             "word_count": 100,
         },
-        scraped_at=datetime(2024, 1, 15, 12, 0, 0)
+        scraped_at=datetime(2024, 1, 15, 12, 0, 0),
     )
 
 
@@ -58,7 +59,7 @@ def sample_sources():
                 "domain": f"example{i}.com",
                 "word_count": 100 + i * 10,
             },
-            scraped_at=datetime(2024, 1, 15, 12, i, 0)
+            scraped_at=datetime(2024, 1, 15, 12, i, 0),
         )
         sources.append(source)
 
@@ -84,7 +85,7 @@ def trustworthy_source():
             "domain": "stanford.edu",
             "authors": ["Dr. Jane Smith", "Dr. John Doe"],
             "word_count": 300,
-        }
+        },
     )
 
 
@@ -106,13 +107,14 @@ def untrustworthy_source():
         metadata={
             "domain": "random-blog.com",
             "word_count": 100,
-        }
+        },
     )
 
 
 # ============================================================================
 # Search Module Fixtures
 # ============================================================================
+
 
 @pytest.fixture
 def mock_ddgs(monkeypatch):
@@ -122,7 +124,7 @@ def mock_ddgs(monkeypatch):
     Returns:
         Mock DDGS instance
     """
-    from tests.mocks.mock_ddgs import MockDDGS, SEARCH_RESULTS_DEFAULT
+    from tests.mocks.mock_ddgs import MockDDGS
 
     monkeypatch.setattr("research_assistant.tools.search.DDGS", MockDDGS)
     return MockDDGS
@@ -160,7 +162,7 @@ def mock_ddgs_with_results(monkeypatch, request):
     """
     from tests.mocks.mock_ddgs import MockDDGS
 
-    results = request.param if hasattr(request, 'param') else []
+    results = request.param if hasattr(request, "param") else []
 
     class CustomDDGS(MockDDGS):
         def text(self, *args, **kwargs):
@@ -173,6 +175,7 @@ def mock_ddgs_with_results(monkeypatch, request):
 # ============================================================================
 # Scraper Module Fixtures
 # ============================================================================
+
 
 @pytest.fixture
 def mock_requests_get_success(monkeypatch):
@@ -264,6 +267,7 @@ def mock_scraper_full(mock_newspaper_article, mock_requests_get_success):
 # Vector Store Module Fixtures
 # ============================================================================
 
+
 @pytest.fixture
 def mock_chroma_client(monkeypatch, temp_data_dir: Path):
     """
@@ -275,7 +279,9 @@ def mock_chroma_client(monkeypatch, temp_data_dir: Path):
     from tests.mocks.mock_chroma import MockChromaClient
 
     client = MockChromaClient()
-    monkeypatch.setattr("research_assistant.tools.vector_store.chromadb.Client", lambda *args, **kwargs: client)
+    monkeypatch.setattr(
+        "research_assistant.tools.vector_store.chromadb.Client", lambda *args, **kwargs: client
+    )
     return client
 
 
@@ -289,7 +295,9 @@ def mock_sentence_transformer(monkeypatch):
     """
     from tests.mocks.mock_embedder import MockSentenceTransformer
 
-    monkeypatch.setattr("research_assistant.tools.vector_store.SentenceTransformer", MockSentenceTransformer)
+    monkeypatch.setattr(
+        "research_assistant.tools.vector_store.SentenceTransformer", MockSentenceTransformer
+    )
     return MockSentenceTransformer
 
 
@@ -310,6 +318,7 @@ def mock_vector_store_full(mock_chroma_client, mock_sentence_transformer, temp_d
 # HTML Fixtures
 # ============================================================================
 
+
 @pytest.fixture
 def html_article_good(html_samples_dir: Path) -> str:
     """
@@ -323,6 +332,7 @@ def html_article_good(html_samples_dir: Path) -> str:
         return file_path.read_text()
     # Fallback if file doesn't exist yet
     from tests.mocks.mock_requests import HTML_ARTICLE_GOOD
+
     return HTML_ARTICLE_GOOD
 
 
@@ -339,6 +349,7 @@ def html_article_minimal(html_samples_dir: Path) -> str:
         return file_path.read_text()
     # Fallback if file doesn't exist yet
     from tests.mocks.mock_requests import HTML_ARTICLE_MINIMAL
+
     return HTML_ARTICLE_MINIMAL
 
 
@@ -355,4 +366,5 @@ def html_no_content(html_samples_dir: Path) -> str:
         return file_path.read_text()
     # Fallback if file doesn't exist yet
     from tests.mocks.mock_requests import HTML_NO_CONTENT
+
     return HTML_NO_CONTENT

@@ -13,6 +13,7 @@ import numpy as np
 # Mock SentenceTransformer Class
 # ============================================================================
 
+
 class MockSentenceTransformer:
     """
     Mock SentenceTransformer for testing.
@@ -37,7 +38,7 @@ class MockSentenceTransformer:
         sentences: Union[str, List[str]],
         batch_size: int = 32,
         show_progress_bar: bool = False,
-        convert_to_numpy: bool = True
+        convert_to_numpy: bool = True,
     ) -> Union[np.ndarray, List[List[float]]]:
         """
         Generate mock embeddings for sentences.
@@ -79,7 +80,7 @@ class MockSentenceTransformer:
             384-dimensional embedding vector
         """
         # Generate hash from text
-        hash_bytes = hashlib.md5(text.encode('utf-8')).digest()
+        hash_bytes = hashlib.md5(text.encode("utf-8")).digest()
 
         # Extend hash to create 384 dimensions
         embedding = []
@@ -104,7 +105,9 @@ class MockSentenceTransformer:
         """
         return self.embedding_dimension
 
-    def similarity(self, embeddings1: List[List[float]], embeddings2: List[List[float]]) -> np.ndarray:
+    def similarity(
+        self, embeddings1: List[List[float]], embeddings2: List[List[float]]
+    ) -> np.ndarray:
         """
         Calculate cosine similarity between embeddings.
 
@@ -134,6 +137,7 @@ class MockSentenceTransformer:
 # ============================================================================
 # Utility Functions
 # ============================================================================
+
 
 def create_mock_embedder(model_name: str = "all-MiniLM-L6-v2") -> MockSentenceTransformer:
     """
@@ -212,7 +216,10 @@ def calculate_cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
 # Test Data Generators
 # ============================================================================
 
-def generate_random_embeddings(n: int, dimension: int = 384, seed: Optional[int] = None) -> List[List[float]]:
+
+def generate_random_embeddings(
+    n: int, dimension: int = 384, seed: Optional[int] = None
+) -> List[List[float]]:
     """
     Generate random embeddings for testing.
 

@@ -5,27 +5,19 @@ Tests ChromaDB vector store functionality without real database persistence.
 """
 
 import pytest
-from pathlib import Path
 
 from research_assistant.tools.vector_store import (
     VectorStore,
     create_vector_store,
-    get_default_store
+    get_default_store,
 )
-from research_assistant.models.source import Source
 from tests.utils.factories import SourceFactory
-from tests.utils.assertions import (
-    assert_valid_source,
-    assert_source_count,
-    assert_all_trustworthy,
-    assert_query_results_valid,
-    assert_collection_count
-)
 
 
 # ============================================================================
 # TestVectorStoreInitialization - VectorStore setup
 # ============================================================================
+
 
 class TestVectorStoreInitialization:
     """Test VectorStore initialization."""
@@ -43,14 +35,18 @@ class TestVectorStoreInitialization:
 
         assert store.collection_name == "custom_collection"
 
-    def test_initialization_with_custom_persist_directory(self, mock_vector_store_full, temp_data_dir):
+    def test_initialization_with_custom_persist_directory(
+        self, mock_vector_store_full, temp_data_dir
+    ):
         """Test VectorStore with custom persist directory."""
         custom_dir = str(temp_data_dir / "custom_db")
         store = VectorStore(persist_directory=custom_dir)
 
         assert store.persist_directory == custom_dir
 
-    def test_initialization_with_custom_embedding_model(self, mock_vector_store_full, temp_data_dir):
+    def test_initialization_with_custom_embedding_model(
+        self, mock_vector_store_full, temp_data_dir
+    ):
         """Test VectorStore with custom embedding model."""
         store = VectorStore(embedding_model="custom-model")
 
@@ -68,6 +64,7 @@ class TestVectorStoreInitialization:
 # ============================================================================
 # TestAddSources - Adding sources to store
 # ============================================================================
+
 
 class TestAddSources:
     """Test adding sources to vector store."""
@@ -101,9 +98,7 @@ class TestAddSources:
         """Test that source metadata is stored correctly."""
         store = VectorStore()
         source = SourceFactory.create(
-            url="https://example.com/article",
-            title="Test Article",
-            trustworthiness_score=90.0
+            url="https://example.com/article", title="Test Article", trustworthiness_score=90.0
         )
 
         store.add_source(source)
@@ -140,6 +135,7 @@ class TestAddSources:
 # ============================================================================
 # TestQuerySimilar - Semantic search
 # ============================================================================
+
 
 class TestQuerySimilar:
     """Test querying for similar sources."""
@@ -222,6 +218,7 @@ class TestQuerySimilar:
 # TestGetByUrl - URL-based retrieval
 # ============================================================================
 
+
 class TestGetByUrl:
     """Test getting sources by URL."""
 
@@ -271,6 +268,7 @@ class TestGetByUrl:
 # ============================================================================
 # TestGetTrustworthySources - Filtering by trustworthiness
 # ============================================================================
+
 
 class TestGetTrustworthySources:
     """Test getting trustworthy sources."""
@@ -339,6 +337,7 @@ class TestGetTrustworthySources:
 # TestDeleteSources - Removing sources
 # ============================================================================
 
+
 class TestDeleteSources:
     """Test deleting sources from store."""
 
@@ -379,6 +378,7 @@ class TestDeleteSources:
 # TestClear - Clearing all sources
 # ============================================================================
 
+
 class TestClear:
     """Test clearing all sources."""
 
@@ -418,6 +418,7 @@ class TestClear:
 # ============================================================================
 # TestStatistics - Store statistics
 # ============================================================================
+
 
 class TestStatistics:
     """Test getting store statistics."""
@@ -463,6 +464,7 @@ class TestStatistics:
 # TestCount - Counting sources
 # ============================================================================
 
+
 class TestCount:
     """Test counting sources in store."""
 
@@ -493,6 +495,7 @@ class TestCount:
 # ============================================================================
 # TestHelperMethods - Internal helper methods
 # ============================================================================
+
 
 class TestHelperMethods:
     """Test internal helper methods."""
@@ -531,6 +534,7 @@ class TestHelperMethods:
 # TestModuleFunctions - Module-level functions
 # ============================================================================
 
+
 class TestModuleFunctions:
     """Test module-level convenience functions."""
 
@@ -553,6 +557,7 @@ class TestModuleFunctions:
         """Test that get_default_store returns singleton."""
         # Reset singleton first
         import research_assistant.tools.vector_store as vs_module
+
         vs_module._default_store = None
 
         store1 = get_default_store()
@@ -564,6 +569,7 @@ class TestModuleFunctions:
 # ============================================================================
 # TestMultipleCollections - Multiple collection support
 # ============================================================================
+
 
 class TestMultipleCollections:
     """Test using multiple collections."""
@@ -594,6 +600,7 @@ class TestMultipleCollections:
 # Parametrized Tests
 # ============================================================================
 
+
 @pytest.mark.parametrize("threshold", [80.0, 85.0, 90.0, 95.0])
 def test_trustworthiness_thresholds(mock_vector_store_full, temp_data_dir, threshold):
     """Test various trustworthiness thresholds."""
@@ -621,6 +628,7 @@ def test_various_source_counts(mock_vector_store_full, temp_data_dir, n_sources)
 # ============================================================================
 # Edge Cases
 # ============================================================================
+
 
 class TestEdgeCases:
     """Test edge cases and error conditions."""

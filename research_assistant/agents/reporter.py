@@ -14,9 +14,8 @@ from ..models.source import Source
 from ..utils.prompts import (
     format_report_summary_prompt,
     format_key_findings_prompt,
-    TEMPERATURE_BALANCED
+    TEMPERATURE_BALANCED,
 )
-from ..config import settings
 
 
 class ReporterAgent(BaseAgent):
@@ -38,7 +37,7 @@ class ReporterAgent(BaseAgent):
         temperature: float = TEMPERATURE_BALANCED,
         verbose: bool = False,
         include_full_content: bool = False,
-        max_sources_in_report: Optional[int] = None
+        max_sources_in_report: Optional[int] = None,
     ):
         """
         Initialize reporter agent.
@@ -54,11 +53,7 @@ class ReporterAgent(BaseAgent):
         self.include_full_content = include_full_content
         self.max_sources_in_report = max_sources_in_report
 
-    def generate_executive_summary(
-        self,
-        topic: str,
-        sources: List[Source]
-    ) -> str:
+    def generate_executive_summary(self, topic: str, sources: List[Source]) -> str:
         """
         Generate executive summary from sources using LLM.
 
@@ -81,16 +76,14 @@ class ReporterAgent(BaseAgent):
 
             # Format prompt
             prompt = format_report_summary_prompt(
-                topic=topic,
-                sources_summary=sources_summary,
-                num_sources=len(sources)
+                topic=topic, sources_summary=sources_summary, num_sources=len(sources)
             )
 
             # Get LLM response
             response = self.llm.invoke(prompt)
 
             # Extract content
-            if hasattr(response, 'content'):
+            if hasattr(response, "content"):
                 summary = response.content
             else:
                 summary = str(response)
@@ -102,11 +95,7 @@ class ReporterAgent(BaseAgent):
             self.log(f"Error generating summary: {e}", level="ERROR")
             return f"Error generating executive summary: {str(e)}"
 
-    def generate_key_findings(
-        self,
-        topic: str,
-        sources: List[Source]
-    ) -> str:
+    def generate_key_findings(self, topic: str, sources: List[Source]) -> str:
         """
         Extract key findings from sources using LLM.
 
@@ -128,16 +117,13 @@ class ReporterAgent(BaseAgent):
             sources_summary = self._format_sources_for_prompt(sources)
 
             # Format prompt
-            prompt = format_key_findings_prompt(
-                topic=topic,
-                sources_summary=sources_summary
-            )
+            prompt = format_key_findings_prompt(topic=topic, sources_summary=sources_summary)
 
             # Get LLM response
             response = self.llm.invoke(prompt)
 
             # Extract content
-            if hasattr(response, 'content'):
+            if hasattr(response, "content"):
                 findings = response.content
             else:
                 findings = str(response)
@@ -175,7 +161,7 @@ class ReporterAgent(BaseAgent):
         sources: List[Source],
         executive_summary: str,
         key_findings: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Generate complete HTML report.
@@ -211,7 +197,7 @@ class ReporterAgent(BaseAgent):
         # Limit sources if specified
         display_sources = sources
         if self.max_sources_in_report and len(sources) > self.max_sources_in_report:
-            display_sources = sources[:self.max_sources_in_report]
+            display_sources = sources[: self.max_sources_in_report]
             self.log(f"Limited report to top {self.max_sources_in_report} sources")
 
         # Generate HTML sections
@@ -286,10 +272,10 @@ class ReporterAgent(BaseAgent):
                 trust_class = "trust-low"
 
             # Get analysis metadata if available
-            analysis = source.metadata.get('trustworthiness_analysis', {})
-            reasoning = analysis.get('reasoning', 'No analysis available')
-            strengths = analysis.get('strengths', [])
-            red_flags = analysis.get('red_flags', [])
+            analysis = source.metadata.get("trustworthiness_analysis", {})
+            reasoning = analysis.get("reasoning", "No analysis available")
+            strengths = analysis.get("strengths", [])
+            red_flags = analysis.get("red_flags", [])
 
             # Format content
             content_html = ""
@@ -327,7 +313,7 @@ class ReporterAgent(BaseAgent):
 
             # Metadata
             domain = source.get_domain()
-            word_count = source.metadata.get('word_count', 'N/A')
+            word_count = source.metadata.get("word_count", "N/A")
 
             source_html = f"""
             <div class="source {trust_class}">
@@ -404,14 +390,16 @@ class ReporterAgent(BaseAgent):
     def _format_text_to_html(self, text: str) -> str:
         """Convert plain text to HTML with paragraph breaks."""
         # Split by double newlines for paragraphs
-        paragraphs = text.split('\n\n')
+        paragraphs = text.split("\n\n")
         html_paragraphs = []
 
         for para in paragraphs:
             para = para.strip()
             if para:
                 # Check if it's a list item
-                if para.startswith(('1.', '2.', '3.', '4.', '5.', '6.', '7.', '8.', '9.', '-', '*')):
+                if para.startswith(
+                    ("1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9.", "-", "*")
+                ):
                     # Keep as-is for lists (will be wrapped in content div)
                     html_paragraphs.append(f"<p>{self._escape_html(para)}</p>")
                 else:
@@ -423,12 +411,13 @@ class ReporterAgent(BaseAgent):
         """Escape HTML special characters."""
         if not text:
             return ""
-        return (text
-                .replace('&', '&amp;')
-                .replace('<', '&lt;')
-                .replace('>', '&gt;')
-                .replace('"', '&quot;')
-                .replace("'", '&#39;'))
+        return (
+            text.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace('"', "&quot;")
+            .replace("'", "&#39;")
+        )
 
     def _get_css_styles(self) -> str:
         """Return CSS styles for the report."""
@@ -674,11 +663,7 @@ class ReporterAgent(BaseAgent):
         """
 
     def run(
-        self,
-        topic: str,
-        sources: List[Source],
-        output_path: Optional[str] = None,
-        **kwargs
+        self, topic: str, sources: List[Source], output_path: Optional[str] = None, **kwargs
     ) -> Dict[str, Any]:
         """
         Execute report generation workflow.
@@ -710,46 +695,72 @@ class ReporterAgent(BaseAgent):
             # Validate inputs
             if not sources:
                 return self.handle_error(
-                    ValueError("No sources provided"),
-                    context="ReporterAgent.run"
+                    ValueError("No sources provided"), context="ReporterAgent.run"
                 )
 
             if not topic:
                 return self.handle_error(
-                    ValueError("Research topic required"),
-                    context="ReporterAgent.run"
+                    ValueError("Research topic required"), context="ReporterAgent.run"
                 )
 
-            # Generate report components
-            self.log("Generating executive summary...")
-            executive_summary = self.generate_executive_summary(topic, sources)
+            # Filter trustworthy sources for analysis
+            trustworthy_sources = [s for s in sources if s.trustworthiness_score >= 85.0]
 
-            self.log("Extracting key findings...")
-            key_findings = self.generate_key_findings(topic, sources)
+            # Use trustworthy sources for executive summary and findings
+            # Use all sources for full report (for transparency)
+            self.log(
+                f"Using {len(trustworthy_sources)}/{len(sources)} trustworthy sources for analysis"
+            )
+
+            # Generate report components
+            if trustworthy_sources:
+                self.log("Generating executive summary...")
+                executive_summary = self.generate_executive_summary(topic, trustworthy_sources)
+
+                self.log("Extracting key findings...")
+                key_findings = self.generate_key_findings(topic, trustworthy_sources)
+            else:
+                # No trustworthy sources - generate warning message
+                self.log(
+                    "No trustworthy sources found - generating limited report", level="WARNING"
+                )
+                executive_summary = (
+                    f"No trustworthy sources (score >= 85) were found for this research topic. "
+                    f"All {len(sources)} sources analyzed had trustworthiness scores below the threshold. "
+                    f"Please review the sources below with caution and consider conducting additional research "
+                    f"from more authoritative sources."
+                )
+                key_findings = (
+                    "- No reliable key findings could be extracted due to low source quality.\n"
+                    "- Further research from credible sources is recommended.\n"
+                    f"- Review the {len(sources)} sources below for potential leads."
+                )
 
             self.log("Generating HTML report...")
             html_report = self.generate_html_report(
                 topic=topic,
-                sources=sources,
+                sources=sources,  # Include ALL sources in full report
                 executive_summary=executive_summary,
-                key_findings=key_findings
+                key_findings=key_findings,
             )
 
             # Optionally save to file
             if output_path:
                 self.log(f"Saving report to {output_path}")
-                with open(output_path, 'w', encoding='utf-8') as f:
+                with open(output_path, "w", encoding="utf-8") as f:
                     f.write(html_report)
                 self.log("Report saved successfully")
 
             # Return results
-            return self.create_success_result({
-                "html_report": html_report,
-                "output_path": output_path,
-                "sources_count": len(sources),
-                "executive_summary": executive_summary,
-                "key_findings": key_findings
-            })
+            return self.create_success_result(
+                {
+                    "html_report": html_report,
+                    "output_path": output_path,
+                    "sources_count": len(sources),
+                    "executive_summary": executive_summary,
+                    "key_findings": key_findings,
+                }
+            )
 
         except Exception as e:
             return self.handle_error(e, context="ReporterAgent.run")

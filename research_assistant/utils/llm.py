@@ -21,7 +21,7 @@ def get_llm(
     model: Optional[str] = None,
     temperature: Optional[float] = None,
     provider: ProviderType = "ollama",
-    **kwargs
+    **kwargs,
 ) -> BaseLLM:
     """
     Get configured LLM instance.
@@ -69,11 +69,7 @@ def get_llm(
         raise ValueError(f"Unsupported provider: {provider}")
 
 
-def _get_ollama_llm(
-    model: str,
-    temperature: float,
-    **kwargs
-) -> Ollama:
+def _get_ollama_llm(model: str, temperature: float, **kwargs) -> Ollama:
     """
     Get Ollama LLM instance.
 
@@ -89,12 +85,7 @@ def _get_ollama_llm(
         >>> llm = _get_ollama_llm("llama3.2:3b", 0.7)
         >>> response = llm.invoke("What is LangGraph?")
     """
-    return Ollama(
-        model=model,
-        temperature=temperature,
-        base_url=settings.ollama_base_url,
-        **kwargs
-    )
+    return Ollama(model=model, temperature=temperature, base_url=settings.ollama_base_url, **kwargs)
 
 
 def test_llm_connection(llm: Optional[BaseLLM] = None) -> bool:
@@ -154,10 +145,12 @@ def get_llm_info(llm: Optional[BaseLLM] = None) -> dict:
 
     # Add Ollama-specific info if available
     if isinstance(llm, Ollama):
-        info.update({
-            "ollama_model": llm.model,
-            "ollama_base_url": llm.base_url,
-        })
+        info.update(
+            {
+                "ollama_model": llm.model,
+                "ollama_base_url": llm.base_url,
+            }
+        )
 
     return info
 
@@ -175,11 +168,7 @@ class LLMFactory:
     """
 
     @staticmethod
-    def create(
-        provider: ProviderType = "ollama",
-        model: Optional[str] = None,
-        **kwargs
-    ) -> BaseLLM:
+    def create(provider: ProviderType = "ollama", model: Optional[str] = None, **kwargs) -> BaseLLM:
         """
         Create LLM instance using factory pattern.
 

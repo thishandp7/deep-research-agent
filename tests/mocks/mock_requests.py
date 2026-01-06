@@ -153,6 +153,7 @@ URL_TO_HTML_MAP: dict[str, str] = {
 # Mock Response Class
 # ============================================================================
 
+
 class MockResponse:
     """
     Mock HTTP response object.
@@ -161,11 +162,7 @@ class MockResponse:
     """
 
     def __init__(
-        self,
-        content: bytes,
-        status_code: int = 200,
-        headers: Optional[dict] = None,
-        url: str = ""
+        self, content: bytes, status_code: int = 200, headers: Optional[dict] = None, url: str = ""
     ):
         """
         Initialize mock response.
@@ -180,8 +177,8 @@ class MockResponse:
         self.status_code = status_code
         self.headers = headers or {"Content-Type": "text/html; charset=utf-8"}
         self.url = url
-        self.text = content.decode('utf-8')
-        self.encoding = 'utf-8'
+        self.text = content.decode("utf-8")
+        self.encoding = "utf-8"
 
     def raise_for_status(self):
         """
@@ -198,10 +195,9 @@ class MockResponse:
 # Mock Request Functions
 # ============================================================================
 
+
 def create_mock_requests_get(
-    html_content: str,
-    status_code: int = 200,
-    headers: Optional[dict] = None
+    html_content: str, status_code: int = 200, headers: Optional[dict] = None
 ) -> Callable:
     """
     Create a mock requests.get function.
@@ -219,6 +215,7 @@ def create_mock_requests_get(
         >>> response = mock_get("https://example.com")
         >>> assert response.status_code == 200
     """
+
     def mock_get(url: str, *args, **kwargs) -> MockResponse:
         # Allow URL-based content selection
         for key, content in URL_TO_HTML_MAP.items():
@@ -229,18 +226,16 @@ def create_mock_requests_get(
             html_content_to_use = html_content
 
         return MockResponse(
-            content=html_content_to_use.encode('utf-8'),
+            content=html_content_to_use.encode("utf-8"),
             status_code=status_code,
             headers=headers,
-            url=url
+            url=url,
         )
 
     return mock_get
 
 
-def create_failing_requests_get(
-    exception: Optional[Exception] = None
-) -> Callable:
+def create_failing_requests_get(exception: Optional[Exception] = None) -> Callable:
     """
     Create a mock requests.get that always fails.
 
@@ -264,9 +259,7 @@ def create_failing_requests_get(
 
 
 def create_mock_requests_get_with_retry(
-    fail_count: int,
-    html_content: str,
-    status_code: int = 200
+    fail_count: int, html_content: str, status_code: int = 200
 ) -> Callable:
     """
     Create a mock requests.get that fails a certain number of times.
@@ -293,11 +286,7 @@ def create_mock_requests_get_with_retry(
         if call_count["count"] <= fail_count:
             raise Exception(f"Attempt {call_count['count']} failed")
 
-        return MockResponse(
-            content=html_content.encode('utf-8'),
-            status_code=status_code,
-            url=url
-        )
+        return MockResponse(content=html_content.encode("utf-8"), status_code=status_code, url=url)
 
     return mock_get
 
@@ -319,21 +308,16 @@ def create_mock_requests_get_with_map(url_map: dict[str, tuple[str, int]]) -> Ca
         ... }
         >>> mock_get = create_mock_requests_get_with_map(url_map)
     """
+
     def mock_get(url: str, *args, **kwargs):
         # Find matching URL pattern
         for pattern, (content, status) in url_map.items():
             if pattern in url:
-                return MockResponse(
-                    content=content.encode('utf-8'),
-                    status_code=status,
-                    url=url
-                )
+                return MockResponse(content=content.encode("utf-8"), status_code=status, url=url)
 
         # Default: 404
         return MockResponse(
-            content=b"<html><body>Not Found</body></html>",
-            status_code=404,
-            url=url
+            content=b"<html><body>Not Found</body></html>", status_code=404, url=url
         )
 
     return mock_get
@@ -343,6 +327,7 @@ def create_mock_requests_get_with_map(url_map: dict[str, tuple[str, int]]) -> Ca
 # Convenience Functions
 # ============================================================================
 
+
 def get_mock_response_good() -> MockResponse:
     """
     Get a mock response with good HTML content.
@@ -350,10 +335,7 @@ def get_mock_response_good() -> MockResponse:
     Returns:
         MockResponse with HTML_ARTICLE_GOOD
     """
-    return MockResponse(
-        content=HTML_ARTICLE_GOOD.encode('utf-8'),
-        status_code=200
-    )
+    return MockResponse(content=HTML_ARTICLE_GOOD.encode("utf-8"), status_code=200)
 
 
 def get_mock_response_minimal() -> MockResponse:
@@ -363,10 +345,7 @@ def get_mock_response_minimal() -> MockResponse:
     Returns:
         MockResponse with HTML_ARTICLE_MINIMAL
     """
-    return MockResponse(
-        content=HTML_ARTICLE_MINIMAL.encode('utf-8'),
-        status_code=200
-    )
+    return MockResponse(content=HTML_ARTICLE_MINIMAL.encode("utf-8"), status_code=200)
 
 
 def get_mock_response_no_content() -> MockResponse:
@@ -376,10 +355,7 @@ def get_mock_response_no_content() -> MockResponse:
     Returns:
         MockResponse with HTML_NO_CONTENT
     """
-    return MockResponse(
-        content=HTML_NO_CONTENT.encode('utf-8'),
-        status_code=200
-    )
+    return MockResponse(content=HTML_NO_CONTENT.encode("utf-8"), status_code=200)
 
 
 def get_mock_response_404() -> MockResponse:
@@ -389,7 +365,4 @@ def get_mock_response_404() -> MockResponse:
     Returns:
         MockResponse with 404 status
     """
-    return MockResponse(
-        content=b"<html><body>404 Not Found</body></html>",
-        status_code=404
-    )
+    return MockResponse(content=b"<html><body>404 Not Found</body></html>", status_code=404)

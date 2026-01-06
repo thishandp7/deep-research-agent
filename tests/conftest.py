@@ -16,6 +16,7 @@ import pytest
 # Pytest Hooks
 # ============================================================================
 
+
 def pytest_configure(config):
     """
     Pytest configuration hook - runs before test collection.
@@ -62,6 +63,7 @@ def pytest_collection_modifyitems(config, items):
 # ============================================================================
 # Session-scoped Fixtures (created once per test session)
 # ============================================================================
+
 
 @pytest.fixture(scope="session")
 def test_root() -> Path:
@@ -110,6 +112,7 @@ def html_samples_dir(fixtures_dir: Path) -> Path:
 # ============================================================================
 # Function-scoped Fixtures (created for each test)
 # ============================================================================
+
 
 @pytest.fixture
 def temp_data_dir() -> Generator[Path, None, None]:
@@ -221,6 +224,7 @@ def sample_search_query() -> str:
 # Auto-applied Fixtures
 # ============================================================================
 
+
 @pytest.fixture(autouse=True)
 def isolate_unit_tests(request, monkeypatch):
     """
@@ -247,6 +251,7 @@ def isolate_unit_tests(request, monkeypatch):
     # Mock requests.get and requests.post
     try:
         import requests
+
         monkeypatch.setattr(requests, "get", raise_on_request)
         monkeypatch.setattr(requests, "post", raise_on_request)
     except ImportError:
@@ -264,6 +269,7 @@ def reset_default_store():
     # Import here to avoid issues if module not yet created
     try:
         from research_assistant.tools import vector_store
+
         vector_store._default_store = None
         yield
         vector_store._default_store = None

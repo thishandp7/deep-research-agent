@@ -13,6 +13,7 @@ from research_assistant.models.source import Source
 # Source Factories
 # ============================================================================
 
+
 class SourceFactory:
     """Factory for creating Source objects."""
 
@@ -23,7 +24,7 @@ class SourceFactory:
         content: str = "Test content for article. " * 20,
         trustworthiness_score: float = 75.0,
         metadata: Optional[dict] = None,
-        scraped_at: Optional[datetime] = None
+        scraped_at: Optional[datetime] = None,
     ) -> Source:
         """
         Create a single Source object.
@@ -57,7 +58,7 @@ class SourceFactory:
             content=content,
             trustworthiness_score=trustworthiness_score,
             metadata=metadata,
-            scraped_at=scraped_at
+            scraped_at=scraped_at,
         )
 
     @staticmethod
@@ -87,6 +88,7 @@ class SourceFactory:
             # Vary scrape time (use offset to avoid overflow)
             if "scraped_at" not in source_kwargs:
                 from datetime import timedelta
+
                 source_kwargs["scraped_at"] = datetime(2024, 1, 15, 12, 0, 0) + timedelta(seconds=i)
 
             sources.append(SourceFactory.create(**source_kwargs))
@@ -97,7 +99,7 @@ class SourceFactory:
     def create_trustworthy(
         url: str = "https://stanford.edu/research",
         title: str = "Academic Research Paper",
-        content: str = "Well-researched academic content with citations. " * 30
+        content: str = "Well-researched academic content with citations. " * 30,
     ) -> Source:
         """
         Create a trustworthy Source (score >= 85).
@@ -125,14 +127,14 @@ class SourceFactory:
                 "authors": ["Dr. Jane Smith", "Dr. John Doe"],
                 "word_count": len(content.split()),
                 "publish_date": "2024-01-10",
-            }
+            },
         )
 
     @staticmethod
     def create_untrustworthy(
         url: str = "https://random-blog.com/opinion",
         title: str = "My Hot Take",
-        content: str = "Just my opinion without sources. " * 10
+        content: str = "Just my opinion without sources. " * 10,
     ) -> Source:
         """
         Create an untrustworthy Source (score < 85).
@@ -158,15 +160,11 @@ class SourceFactory:
             metadata={
                 "domain": "random-blog.com",
                 "word_count": len(content.split()),
-            }
+            },
         )
 
     @staticmethod
-    def create_with_score_range(
-        min_score: float,
-        max_score: float,
-        count: int = 5
-    ) -> List[Source]:
+    def create_with_score_range(min_score: float, max_score: float, count: int = 5) -> List[Source]:
         """
         Create sources with scores in a specific range.
 
@@ -187,11 +185,13 @@ class SourceFactory:
 
         for i in range(count):
             score = min_score + (i * score_step)
-            sources.append(SourceFactory.create(
-                url=f"https://example{i}.com/article",
-                title=f"Article {i}",
-                trustworthiness_score=score
-            ))
+            sources.append(
+                SourceFactory.create(
+                    url=f"https://example{i}.com/article",
+                    title=f"Article {i}",
+                    trustworthiness_score=score,
+                )
+            )
 
         return sources
 
@@ -200,6 +200,7 @@ class SourceFactory:
 # Search Result Factories
 # ============================================================================
 
+
 class SearchResultFactory:
     """Factory for creating search result dictionaries."""
 
@@ -207,7 +208,7 @@ class SearchResultFactory:
     def create(
         title: str = "Test Search Result",
         href: str = "https://example.com/result",
-        body: str = "Search result snippet text..."
+        body: str = "Search result snippet text...",
     ) -> dict:
         """
         Create a single search result dictionary.
@@ -225,11 +226,7 @@ class SearchResultFactory:
             >>> assert "title" in result
             >>> assert "href" in result
         """
-        return {
-            "title": title,
-            "href": href,
-            "body": body
-        }
+        return {"title": title, "href": href, "body": body}
 
     @staticmethod
     def create_batch(count: int, **kwargs) -> List[dict]:
@@ -276,11 +273,13 @@ class SearchResultFactory:
         """
         results = []
         for i in range(count):
-            results.append(SearchResultFactory.create(
-                title=f"{domain} - Page {i}",
-                href=f"https://{domain}/page{i}",
-                body=f"Content from {domain}..."
-            ))
+            results.append(
+                SearchResultFactory.create(
+                    title=f"{domain} - Page {i}",
+                    href=f"https://{domain}/page{i}",
+                    body=f"Content from {domain}...",
+                )
+            )
 
         return results
 
@@ -289,10 +288,9 @@ class SearchResultFactory:
 # HTML Content Factories
 # ============================================================================
 
+
 def create_html_article(
-    title: str = "Test Article",
-    content_paragraphs: int = 5,
-    include_metadata: bool = True
+    title: str = "Test Article", content_paragraphs: int = 5, include_metadata: bool = True
 ) -> str:
     """
     Create HTML article for testing.
@@ -310,10 +308,12 @@ def create_html_article(
         >>> assert "My Article" in html
         >>> assert "<article>" in html
     """
-    paragraphs = "\n".join([
-        f"<p>This is paragraph {i} of the article content. It contains meaningful information about the topic.</p>"
-        for i in range(1, content_paragraphs + 1)
-    ])
+    paragraphs = "\n".join(
+        [
+            f"<p>This is paragraph {i} of the article content. It contains meaningful information about the topic.</p>"
+            for i in range(1, content_paragraphs + 1)
+        ]
+    )
 
     metadata = ""
     if include_metadata:
@@ -369,6 +369,7 @@ def create_minimal_html(text: str = "Minimal content") -> str:
 # ============================================================================
 # Utility Functions
 # ============================================================================
+
 
 def create_test_timestamp(offset_hours: int = 0) -> datetime:
     """

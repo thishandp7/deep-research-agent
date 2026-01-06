@@ -16,9 +16,7 @@ from ..config import settings
 
 
 def scrape_url(
-    url: str,
-    timeout: Optional[int] = None,
-    max_retries: Optional[int] = None
+    url: str, timeout: Optional[int] = None, max_retries: Optional[int] = None
 ) -> Source:
     """
     Scrape content from a URL.
@@ -93,7 +91,7 @@ def _scrape_with_newspaper(url: str, timeout: int) -> Source:
         "publish_date": str(article.publish_date) if article.publish_date else None,
         "top_image": article.top_image,
         "word_count": len(article.text.split()) if article.text else 0,
-        "extraction_method": "newspaper3k"
+        "extraction_method": "newspaper3k",
     }
 
     source = Source(
@@ -101,7 +99,7 @@ def _scrape_with_newspaper(url: str, timeout: int) -> Source:
         title=article.title or "",
         content=article.text or "",
         metadata=metadata,
-        scraped_at=datetime.now()
+        scraped_at=datetime.now(),
     )
 
     # Validate that we got meaningful content
@@ -126,40 +124,38 @@ def _scrape_with_beautifulsoup(url: str, timeout: int) -> Source:
         Exception: If extraction fails
     """
     # Fetch the page
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (compatible; ResearchAssistant/1.0)'
-    }
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; ResearchAssistant/1.0)"}
     response = requests.get(url, timeout=timeout, headers=headers)
     response.raise_for_status()
 
     # Parse with BeautifulSoup
-    soup = BeautifulSoup(response.content, 'lxml')
+    soup = BeautifulSoup(response.content, "lxml")
 
     # Extract title
     title = ""
     if soup.title:
         title = soup.title.string or ""
-    elif soup.find('h1'):
-        title = soup.find('h1').get_text(strip=True)
+    elif soup.find("h1"):
+        title = soup.find("h1").get_text(strip=True)
 
     # Extract main content
     # Remove unwanted elements
-    for element in soup(['script', 'style', 'nav', 'header', 'footer', 'aside']):
+    for element in soup(["script", "style", "nav", "header", "footer", "aside"]):
         element.decompose()
 
     # Try to find main content area
     content_area = (
-        soup.find('article') or
-        soup.find('main') or
-        soup.find('div', class_='content') or
-        soup.find('div', id='content') or
-        soup.body
+        soup.find("article")
+        or soup.find("main")
+        or soup.find("div", class_="content")
+        or soup.find("div", id="content")
+        or soup.body
     )
 
     if content_area:
         # Get text from paragraphs
-        paragraphs = content_area.find_all('p')
-        content = '\n\n'.join(p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True))
+        paragraphs = content_area.find_all("p")
+        content = "\n\n".join(p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True))
     else:
         content = ""
 
@@ -167,15 +163,11 @@ def _scrape_with_beautifulsoup(url: str, timeout: int) -> Source:
     metadata = {
         "domain": urlparse(url).netloc,
         "word_count": len(content.split()) if content else 0,
-        "extraction_method": "beautifulsoup"
+        "extraction_method": "beautifulsoup",
     }
 
     source = Source(
-        url=url,
-        title=title,
-        content=content,
-        metadata=metadata,
-        scraped_at=datetime.now()
+        url=url, title=title, content=content, metadata=metadata, scraped_at=datetime.now()
     )
 
     # Validate content
@@ -189,7 +181,7 @@ def scrape_multiple_urls(
     urls: list[str],
     timeout: Optional[int] = None,
     max_retries: Optional[int] = None,
-    skip_errors: bool = True
+    skip_errors: bool = True,
 ) -> tuple[list[Source], list[str]]:
     """
     Scrape multiple URLs.
@@ -282,7 +274,7 @@ def get_content_preview(content: str, max_chars: int = 200) -> str:
     """
     if len(content) <= max_chars:
         return content
-    return content[:max_chars].rsplit(' ', 1)[0] + "..."
+    return content[:max_chars].rsplit(" ", 1)[0] + "..."
 
 
 class ScrapeResult:
@@ -341,10 +333,7 @@ class ScrapeResult:
 
 
 # Convenience function
-def scrape_and_validate(
-    url: str,
-    min_content_length: int = 100
-) -> Optional[Source]:
+def scrape_and_validate(url: str, min_content_length: int = 100) -> Optional[Source]:
     """
     Scrape URL and validate content length.
 

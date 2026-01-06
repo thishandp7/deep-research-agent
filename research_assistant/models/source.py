@@ -7,7 +7,7 @@ to represent discovered web sources with their content and metadata.
 
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, Field, HttpUrl, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class Source(BaseModel):
@@ -31,36 +31,22 @@ class Source(BaseModel):
         ... )
     """
 
-    url: str = Field(
-        ...,
-        description="Source URL"
-    )
+    url: str = Field(..., description="Source URL")
 
-    title: str = Field(
-        default="",
-        description="Article or page title"
-    )
+    title: str = Field(default="", description="Article or page title")
 
-    content: str = Field(
-        default="",
-        description="Extracted main content (plain text)"
-    )
+    content: str = Field(default="", description="Extracted main content (plain text)")
 
     trustworthiness_score: float = Field(
-        default=0.0,
-        ge=0.0,
-        le=100.0,
-        description="Trustworthiness score (0-100)"
+        default=0.0, ge=0.0, le=100.0, description="Trustworthiness score (0-100)"
     )
 
     metadata: dict = Field(
-        default_factory=dict,
-        description="Additional metadata (author, date, domain, etc.)"
+        default_factory=dict, description="Additional metadata (author, date, domain, etc.)"
     )
 
     scraped_at: Optional[datetime] = Field(
-        default=None,
-        description="Timestamp when content was scraped"
+        default=None, description="Timestamp when content was scraped"
     )
 
     model_config = ConfigDict(
@@ -74,9 +60,9 @@ class Source(BaseModel):
                     "author": "Dr. Jane Smith",
                     "publish_date": "2024-01-15",
                     "domain": "example.com",
-                    "word_count": 1250
+                    "word_count": 1250,
                 },
-                "scraped_at": "2024-01-20T10:30:00"
+                "scraped_at": "2024-01-20T10:30:00",
             }
         }
     )
@@ -101,6 +87,7 @@ class Source(BaseModel):
             Domain name (e.g., "example.com")
         """
         from urllib.parse import urlparse
+
         parsed = urlparse(self.url)
         return parsed.netloc
 
@@ -137,10 +124,7 @@ class SourceCollection(BaseModel):
     Useful for managing multiple sources together.
     """
 
-    sources: list[Source] = Field(
-        default_factory=list,
-        description="List of sources"
-    )
+    sources: list[Source] = Field(default_factory=list, description="List of sources")
 
     def add(self, source: Source) -> None:
         """Add a source to the collection"""
@@ -182,7 +166,7 @@ class SourceCollection(BaseModel):
                 "total_count": 0,
                 "average_score": 0.0,
                 "trustworthy_count": 0,
-                "trustworthy_percentage": 0.0
+                "trustworthy_percentage": 0.0,
             }
 
         scores = [s.trustworthiness_score for s in self.sources]
@@ -192,7 +176,7 @@ class SourceCollection(BaseModel):
             "total_count": len(self.sources),
             "average_score": sum(scores) / len(scores),
             "trustworthy_count": len(trustworthy),
-            "trustworthy_percentage": (len(trustworthy) / len(self.sources)) * 100
+            "trustworthy_percentage": (len(trustworthy) / len(self.sources)) * 100,
         }
 
     def __len__(self) -> int:

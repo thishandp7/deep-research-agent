@@ -14,9 +14,8 @@ from ..models.source import Source
 from ..utils.prompts import (
     format_trustworthiness_prompt,
     DEFAULT_PREVIEW_LENGTH,
-    TEMPERATURE_ANALYTICAL
+    TEMPERATURE_ANALYTICAL,
 )
-from ..config import settings
 
 
 class AnalyzerAgent(BaseAgent):
@@ -37,7 +36,7 @@ class AnalyzerAgent(BaseAgent):
         temperature: float = TEMPERATURE_ANALYTICAL,
         verbose: bool = False,
         preview_length: int = DEFAULT_PREVIEW_LENGTH,
-        trustworthy_threshold: float = 85.0
+        trustworthy_threshold: float = 85.0,
     ):
         """
         Initialize analyzer agent.
@@ -53,11 +52,7 @@ class AnalyzerAgent(BaseAgent):
         self.preview_length = preview_length
         self.trustworthy_threshold = trustworthy_threshold
 
-    def analyze_source(
-        self,
-        source: Source,
-        topic: str
-    ) -> Source:
+    def analyze_source(self, source: Source, topic: str) -> Source:
         """
         Analyze a single source for trustworthiness.
 
@@ -81,17 +76,14 @@ class AnalyzerAgent(BaseAgent):
 
             # Format prompt
             prompt = format_trustworthiness_prompt(
-                topic=topic,
-                url=source.url,
-                title=source.title,
-                content_preview=content_preview
+                topic=topic, url=source.url, title=source.title, content_preview=content_preview
             )
 
             # Get LLM analysis
             response = self.llm.invoke(prompt)
 
             # Extract content from response
-            if hasattr(response, 'content'):
+            if hasattr(response, "content"):
                 text = response.content
             else:
                 text = str(response)
@@ -100,14 +92,14 @@ class AnalyzerAgent(BaseAgent):
             analysis = self._parse_analysis_response(text)
 
             # Update source with score and analysis
-            source.trustworthiness_score = analysis.get('score', 50.0)
+            source.trustworthiness_score = analysis.get("score", 50.0)
 
             # Add analysis details to metadata
-            source.metadata['trustworthiness_analysis'] = {
-                'reasoning': analysis.get('reasoning', ''),
-                'red_flags': analysis.get('red_flags', []),
-                'strengths': analysis.get('strengths', []),
-                'analyzed_at': str(source.scraped_at) if source.scraped_at else None
+            source.metadata["trustworthiness_analysis"] = {
+                "reasoning": analysis.get("reasoning", ""),
+                "red_flags": analysis.get("red_flags", []),
+                "strengths": analysis.get("strengths", []),
+                "analyzed_at": str(source.scraped_at) if source.scraped_at else None,
             }
 
             self.log(f"Score: {source.trustworthiness_score:.1f}/100")
@@ -117,9 +109,9 @@ class AnalyzerAgent(BaseAgent):
             self.log(f"Error analyzing {source.url}: {e}", level="ERROR")
             # Return source with default score on error
             source.trustworthiness_score = 50.0
-            source.metadata['trustworthiness_analysis'] = {
-                'error': str(e),
-                'reasoning': 'Analysis failed - assigned default score'
+            source.metadata["trustworthiness_analysis"] = {
+                "error": str(e),
+                "reasoning": "Analysis failed - assigned default score",
             }
             return source
 
@@ -142,10 +134,10 @@ class AnalyzerAgent(BaseAgent):
             text = text.strip()
 
             # Remove markdown code blocks if present
-            if text.startswith('```'):
+            if text.startswith("```"):
                 # Find the JSON content between ```
-                start = text.find('{')
-                end = text.rfind('}') + 1
+                start = text.find("{")
+                end = text.rfind("}") + 1
                 if start != -1 and end > start:
                     text = text[start:end]
 
@@ -153,20 +145,20 @@ class AnalyzerAgent(BaseAgent):
             analysis = json.loads(text)
 
             # Validate required fields
-            if 'score' not in analysis:
+            if "score" not in analysis:
                 raise ValueError("Response missing 'score' field")
 
             # Ensure score is in valid range
-            score = float(analysis['score'])
+            score = float(analysis["score"])
             if not (0 <= score <= 100):
                 self.log(f"Score {score} out of range, clamping to 0-100", level="WARNING")
                 score = max(0, min(100, score))
-                analysis['score'] = score
+                analysis["score"] = score
 
             # Set defaults for optional fields
-            analysis.setdefault('reasoning', 'No reasoning provided')
-            analysis.setdefault('red_flags', [])
-            analysis.setdefault('strengths', [])
+            analysis.setdefault("reasoning", "No reasoning provided")
+            analysis.setdefault("red_flags", [])
+            analysis.setdefault("strengths", [])
 
             return analysis
 
@@ -174,23 +166,20 @@ class AnalyzerAgent(BaseAgent):
             self.log(f"Failed to parse JSON: {e}", level="ERROR")
             # Try to extract score from text if JSON parsing fails
             import re
+
             score_match = re.search(r'score["\s:]+(\d+)', text, re.IGNORECASE)
             if score_match:
                 score = float(score_match.group(1))
                 self.log(f"Extracted score {score} from malformed response", level="WARNING")
                 return {
-                    'score': score,
-                    'reasoning': 'Parsed from malformed response',
-                    'red_flags': [],
-                    'strengths': []
+                    "score": score,
+                    "reasoning": "Parsed from malformed response",
+                    "red_flags": [],
+                    "strengths": [],
                 }
             raise ValueError(f"Could not parse analysis response: {text[:100]}")
 
-    def analyze_sources(
-        self,
-        sources: List[Source],
-        topic: str
-    ) -> List[Source]:
+    def analyze_sources(self, sources: List[Source], topic: str) -> List[Source]:
         """
         Analyze multiple sources for trustworthiness.
 
@@ -214,15 +203,11 @@ class AnalyzerAgent(BaseAgent):
             analyzed_source = self.analyze_source(source, topic)
             analyzed.append(analyzed_source)
 
-        self.log(f"Analysis complete")
+        self.log("Analysis complete")
         return analyzed
 
     def run(
-        self,
-        sources: List[Source],
-        topic: str,
-        filter_untrustworthy: bool = False,
-        **kwargs
+        self, sources: List[Source], topic: str, filter_untrustworthy: bool = False, **kwargs
     ) -> Dict[str, Any]:
         """
         Execute analysis workflow: analyze sources → score → optionally filter.
@@ -252,14 +237,12 @@ class AnalyzerAgent(BaseAgent):
             # Validate inputs
             if not sources:
                 return self.handle_error(
-                    ValueError("No sources provided"),
-                    context="AnalyzerAgent.run"
+                    ValueError("No sources provided"), context="AnalyzerAgent.run"
                 )
 
             if not topic:
                 return self.handle_error(
-                    ValueError("Research topic required"),
-                    context="AnalyzerAgent.run"
+                    ValueError("Research topic required"), context="AnalyzerAgent.run"
                 )
 
             # Analyze sources
@@ -270,8 +253,7 @@ class AnalyzerAgent(BaseAgent):
             avg_score = sum(scores) / len(scores) if scores else 0.0
 
             trustworthy = [
-                s for s in analyzed_sources
-                if s.trustworthiness_score >= self.trustworthy_threshold
+                s for s in analyzed_sources if s.trustworthiness_score >= self.trustworthy_threshold
             ]
             trustworthy_count = len(trustworthy)
 
@@ -286,22 +268,22 @@ class AnalyzerAgent(BaseAgent):
                 )
 
             # Return results
-            return self.create_success_result({
-                "sources": analyzed_sources,
-                "total_analyzed": len(sources),
-                "trustworthy_count": trustworthy_count,
-                "average_score": avg_score,
-                "filtered_count": filtered_count,
-                "trustworthy_percentage": (trustworthy_count / len(sources)) * 100
-            })
+            return self.create_success_result(
+                {
+                    "sources": analyzed_sources,
+                    "total_analyzed": len(sources),
+                    "trustworthy_count": trustworthy_count,
+                    "average_score": avg_score,
+                    "filtered_count": filtered_count,
+                    "trustworthy_percentage": (trustworthy_count / len(sources)) * 100,
+                }
+            )
 
         except Exception as e:
             return self.handle_error(e, context="AnalyzerAgent.run")
 
     def get_trustworthy_sources(
-        self,
-        sources: List[Source],
-        threshold: Optional[float] = None
+        self, sources: List[Source], threshold: Optional[float] = None
     ) -> List[Source]:
         """
         Filter sources by trustworthiness threshold.
@@ -322,8 +304,7 @@ class AnalyzerAgent(BaseAgent):
 
         if self.verbose:
             self.log(
-                f"Found {len(trustworthy)}/{len(sources)} sources "
-                f"above threshold {threshold}"
+                f"Found {len(trustworthy)}/{len(sources)} sources " f"above threshold {threshold}"
             )
 
         return trustworthy
@@ -351,7 +332,7 @@ class AnalyzerAgent(BaseAgent):
                 "min_score": 0.0,
                 "max_score": 0.0,
                 "trustworthy_count": 0,
-                "trustworthy_percentage": 0.0
+                "trustworthy_percentage": 0.0,
             }
 
         scores = sorted(s.trustworthiness_score for s in sources)
@@ -373,5 +354,5 @@ class AnalyzerAgent(BaseAgent):
                 "good (80-89)": len([s for s in scores if 80 <= s < 90]),
                 "fair (70-79)": len([s for s in scores if 70 <= s < 80]),
                 "poor (0-69)": len([s for s in scores if s < 70]),
-            }
+            },
         }

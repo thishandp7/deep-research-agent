@@ -59,6 +59,7 @@ URL_CONTENT_MAP: dict[str, tuple[str, str]] = {
 # Mock Article Class
 # ============================================================================
 
+
 class MockArticle:
     """
     Mock newspaper Article class.
@@ -104,7 +105,7 @@ class MockArticle:
         self._downloaded = True
 
         # Simulate HTML content
-        self.html = f"<html><body><h1>Article</h1><p>Content</p></body></html>"
+        self.html = "<html><body><h1>Article</h1><p>Content</p></body></html>"
 
     def parse(self):
         """
@@ -223,12 +224,13 @@ class MinimalContentMockArticle(MockArticle):
 # Factory Functions
 # ============================================================================
 
+
 def create_mock_article_with_content(
     url: str,
     title: str,
     content: str,
     authors: Optional[List[str]] = None,
-    publish_date: Optional[datetime] = None
+    publish_date: Optional[datetime] = None,
 ) -> MockArticle:
     """
     Create a MockArticle with specific content.
@@ -254,6 +256,7 @@ def create_mock_article_with_content(
         >>> article.parse()
         >>> assert article.title == "Test Title"
     """
+
     class CustomMockArticle(MockArticle):
         def _extract_content_from_url(self):
             self.title = title
@@ -269,7 +272,7 @@ def create_mock_article_class_with_content(
     title: str,
     content: str,
     authors: Optional[List[str]] = None,
-    publish_date: Optional[datetime] = None
+    publish_date: Optional[datetime] = None,
 ) -> type[MockArticle]:
     """
     Create a MockArticle class with specific content.
@@ -294,6 +297,7 @@ def create_mock_article_class_with_content(
         >>> article.parse()
         >>> assert article.title == "Custom Title"
     """
+
     class CustomMockArticle(MockArticle):
         def _extract_content_from_url(self):
             self.title = title

@@ -21,6 +21,7 @@ from langgraph.graph import StateGraph, END
 # Step 1: Define the state schema
 class SimpleState(TypedDict):
     """State that flows through the graph"""
+
     topic: str
     queries: list[str]
     results: list[str]

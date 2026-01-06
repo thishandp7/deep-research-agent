@@ -5,7 +5,6 @@ Tests DuckDuckGo search functionality without making real API calls.
 """
 
 import pytest
-from typing import List
 
 from research_assistant.tools.search import (
     search_duckduckgo,
@@ -13,27 +12,25 @@ from research_assistant.tools.search import (
     extract_urls_from_results,
     filter_urls_by_domain,
     SearchResult,
-    search_and_get_urls
+    search_and_get_urls,
 )
 from tests.mocks.mock_ddgs import (
-    SEARCH_RESULTS_DEFAULT,
-    SEARCH_RESULTS_EMPTY,
     SEARCH_RESULTS_MANY,
     SEARCH_RESULTS_DUPLICATE_URLS,
-    create_mock_ddgs_with_results
+    create_mock_ddgs_with_results,
 )
 from tests.utils.factories import SearchResultFactory
 from tests.utils.assertions import (
     assert_search_results_valid,
-    assert_search_result_count,
     assert_url_list_unique,
-    assert_urls_from_domain
+    assert_urls_from_domain,
 )
 
 
 # ============================================================================
 # TestSearchDuckDuckGo - Basic search functionality
 # ============================================================================
+
 
 class TestSearchDuckDuckGo:
     """Test basic DuckDuckGo search functionality."""
@@ -108,6 +105,7 @@ class TestSearchDuckDuckGo:
 # TestSearchMultipleQueries - Multiple query searches
 # ============================================================================
 
+
 class TestSearchMultipleQueries:
     """Test searching multiple queries."""
 
@@ -173,6 +171,7 @@ class TestSearchMultipleQueries:
 # TestFilterUrlsByDomain - Domain filtering
 # ============================================================================
 
+
 class TestFilterUrlsByDomain:
     """Test URL filtering by domain."""
 
@@ -215,7 +214,7 @@ class TestFilterUrlsByDomain:
         filtered = filter_urls_by_domain(
             urls,
             allowed_domains=["github.com", "gitlab.com", "bitbucket.com"],
-            blocked_domains=["gitlab.com"]
+            blocked_domains=["gitlab.com"],
         )
 
         assert len(filtered) == 2
@@ -239,6 +238,7 @@ class TestFilterUrlsByDomain:
 # ============================================================================
 # TestSearchResult - SearchResult wrapper class
 # ============================================================================
+
 
 class TestSearchResult:
     """Test SearchResult wrapper class."""
@@ -321,6 +321,7 @@ class TestSearchResult:
 # TestUtilityFunctions - Helper functions
 # ============================================================================
 
+
 class TestUtilityFunctions:
     """Test utility functions."""
 
@@ -338,6 +339,7 @@ class TestUtilityFunctions:
 # TestSearchAndGetUrls - Convenience function
 # ============================================================================
 
+
 class TestSearchAndGetUrls:
     """Test search_and_get_urls convenience function."""
 
@@ -351,11 +353,7 @@ class TestSearchAndGetUrls:
 
     def test_search_and_get_urls_with_filters(self, mock_ddgs):
         """Test search with domain filters."""
-        urls = search_and_get_urls(
-            "test query",
-            max_results=10,
-            blocked_domains=["reddit.com"]
-        )
+        urls = search_and_get_urls("test query", max_results=10, blocked_domains=["reddit.com"])
 
         assert isinstance(urls, list)
         assert not any("reddit.com" in url for url in urls)
@@ -365,11 +363,15 @@ class TestSearchAndGetUrls:
 # Parametrized Tests
 # ============================================================================
 
-@pytest.mark.parametrize("query,expected_min_results", [
-    ("artificial intelligence", 1),
-    ("machine learning", 1),
-    ("python programming", 1),
-])
+
+@pytest.mark.parametrize(
+    "query,expected_min_results",
+    [
+        ("artificial intelligence", 1),
+        ("machine learning", 1),
+        ("python programming", 1),
+    ],
+)
 def test_search_queries_parametrized(mock_ddgs, query, expected_min_results):
     """Test various search queries return results."""
     results = search_duckduckgo(query, max_results=10)
