@@ -1,0 +1,109 @@
+[run]
+# Source code to measure coverage for
+source = research_assistant
+
+# Omit these files/directories from coverage
+omit =
+    # Test files themselves
+    */tests/*
+    */test_*.py
+    # Virtual environments
+    */.venv/*
+    */venv/*
+    */env/*
+    # Python cache
+    */__pycache__/*
+    */.pytest_cache/*
+    # Examples (not production code)
+    */examples/*
+    # Setup files
+    setup.py
+    */setup.py
+    # Migration scripts (if any in future)
+    */migrations/*
+
+# Measure branch coverage in addition to statement coverage
+branch = True
+
+# Run tests in parallel (if using pytest-xdist)
+parallel = False
+
+# Coverage data file
+data_file = .coverage
+
+[report]
+# Precision for coverage percentages
+precision = 2
+
+# Show missing lines in terminal report
+show_missing = True
+
+# Skip covered files in report
+skip_covered = False
+
+# Skip empty files
+skip_empty = True
+
+# Sort report by different criteria
+sort = Cover
+
+# Exclude these lines from coverage
+exclude_lines =
+    # Standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug code
+    def __repr__
+    def __str__
+
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+
+    # Don't complain about abstract methods
+    @abstractmethod
+    @abc.abstractmethod
+
+    # Don't complain about protocol methods
+    @typing.runtime_checkable
+
+    # Don't complain about ellipsis in protocol/stub files
+    \.\.\.
+
+    # Don't complain about pass statements
+    pass
+
+# Fail if coverage is below this threshold
+fail_under = 80.0
+
+[html]
+# Directory for HTML report
+directory = htmlcov
+
+# Title for HTML report
+title = Research Assistant Coverage Report
+
+# Show contexts in HTML report
+show_contexts = True
+
+[xml]
+# XML output file (for CI/CD tools)
+output = coverage.xml
+
+[json]
+# JSON output file
+output = coverage.json
+# Pretty print JSON
+pretty_print = True
+# Show execution context
+show_contexts = True
+
+[paths]
+# Map paths for consistent coverage across different environments
+source =
+    research_assistant/
+    */site-packages/research_assistant/

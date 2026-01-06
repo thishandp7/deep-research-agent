@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from typing import Literal
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 
 
@@ -114,11 +114,11 @@ class Settings(BaseSettings):
         description="Logging level (DEBUG, INFO, WARNING, ERROR)"
     )
 
-    class Config:
-        """Pydantic settings configuration"""
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(
+        env_file = ".env",
+        env_file_encoding = "utf-8",
         case_sensitive = False  # Allow lowercase env vars
+    )
 
     def ensure_directories(self) -> None:
         """

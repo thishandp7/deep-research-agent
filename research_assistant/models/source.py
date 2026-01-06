@@ -7,7 +7,7 @@ to represent discovered web sources with their content and metadata.
 
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, ConfigDict
 
 
 class Source(BaseModel):
@@ -63,9 +63,8 @@ class Source(BaseModel):
         description="Timestamp when content was scraped"
     )
 
-    class Config:
-        """Pydantic configuration"""
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "url": "https://example.com/ai-article",
                 "title": "Understanding Artificial Intelligence",
@@ -80,6 +79,7 @@ class Source(BaseModel):
                 "scraped_at": "2024-01-20T10:30:00"
             }
         }
+    )
 
     def is_trustworthy(self, threshold: float = 85.0) -> bool:
         """

@@ -1,0 +1,39 @@
+2026-01-05 18:14:18 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): en.wikipedia.org:443
+2026-01-05 18:14:18 [   DEBUG] urllib3.connectionpool - https://en.wikipedia.org:443 "GET /wiki/Artificial_intelligence HTTP/1.1" 200 239527
+2026-01-05 18:14:19 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): www.ibm.com:443
+2026-01-05 18:14:20 [   DEBUG] urllib3.connectionpool - https://www.ibm.com:443 "GET /topics/artificial-intelligence HTTP/1.1" 301 228
+2026-01-05 18:14:20 [   DEBUG] urllib3.connectionpool - https://www.ibm.com:443 "GET /think/topics/artificial-intelligence HTTP/1.1" 200 None
+2026-01-05 18:14:20 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): stanford.edu:443
+2026-01-05 18:14:20 [   DEBUG] urllib3.connectionpool - https://stanford.edu:443 "GET /ai-ethics HTTP/1.1" 404 None
+2026-01-05 18:14:20 [   DEBUG] newspaper.article - Download failed on URL https://stanford.edu/ai-ethics because of 404 Client Error: Not Found for url: https://stanford.edu/ai-ethics
+2026-01-05 18:14:20 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): stanford.edu:443
+2026-01-05 18:14:20 [   DEBUG] urllib3.connectionpool - https://stanford.edu:443 "GET /ai-ethics HTTP/1.1" 404 None
+2026-01-05 18:14:20 [   DEBUG] newspaper.article - Download failed on URL https://stanford.edu/ai-ethics because of 404 Client Error: Not Found for url: https://stanford.edu/ai-ethics
+2026-01-05 18:14:20 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): stanford.edu:443
+2026-01-05 18:14:21 [   DEBUG] urllib3.connectionpool - https://stanford.edu:443 "GET /ai-ethics HTTP/1.1" 404 None
+2026-01-05 18:14:21 [   DEBUG] newspaper.article - Download failed on URL https://stanford.edu/ai-ethics because of 404 Client Error: Not Found for url: https://stanford.edu/ai-ethics
+2026-01-05 18:14:21 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): stanford.edu:443
+2026-01-05 18:14:21 [   DEBUG] urllib3.connectionpool - https://stanford.edu:443 "GET /ai-ethics HTTP/1.1" 404 None
+2026-01-05 18:14:21 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): news.mit.edu:443
+2026-01-05 18:14:21 [   DEBUG] urllib3.connectionpool - https://news.mit.edu:443 "GET /topic/artificial-intelligence2 HTTP/1.1" 200 25318
+2026-01-05 18:14:21 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): ai.google:443
+2026-01-05 18:14:22 [   DEBUG] urllib3.connectionpool - https://ai.google:443 "GET /education/ HTTP/1.1" 302 0
+2026-01-05 18:14:22 [   DEBUG] urllib3.connectionpool - https://ai.google:443 "GET /learn-ai-skills/ HTTP/1.1" 200 None
+2026-01-05 18:14:22 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): ai.google:443
+2026-01-05 18:14:23 [   DEBUG] urllib3.connectionpool - https://ai.google:443 "GET /education/ HTTP/1.1" 302 0
+2026-01-05 18:14:23 [   DEBUG] urllib3.connectionpool - https://ai.google:443 "GET /learn-ai-skills/ HTTP/1.1" 200 None
+2026-01-05 18:14:23 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): ai.google:443
+2026-01-05 18:14:23 [   DEBUG] urllib3.connectionpool - https://ai.google:443 "GET /education/ HTTP/1.1" 302 0
+2026-01-05 18:14:23 [   DEBUG] urllib3.connectionpool - https://ai.google:443 "GET /learn-ai-skills/ HTTP/1.1" 200 None
+2026-01-05 18:14:24 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): ai.google:443
+2026-01-05 18:14:24 [   DEBUG] urllib3.connectionpool - https://ai.google:443 "GET /education/ HTTP/1.1" 302 0
+2026-01-05 18:14:24 [   DEBUG] urllib3.connectionpool - https://ai.google:443 "GET /learn-ai-skills/ HTTP/1.1" 200 None
+2026-01-05 18:14:24 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): fail.com:443
+2026-01-05 18:14:24 [   DEBUG] newspaper.article - Download failed on URL https://fail.com/article because of HTTPSConnectionPool(host='fail.com', port=443): Max retries exceeded with url: /article (Caused by SSLError(SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'fail.com'. (_ssl.c:1028)")))
+2026-01-05 18:14:24 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): fail.com:443
+2026-01-05 18:14:25 [   DEBUG] newspaper.article - Download failed on URL https://fail.com/article because of HTTPSConnectionPool(host='fail.com', port=443): Max retries exceeded with url: /article (Caused by SSLError(SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'fail.com'. (_ssl.c:1028)")))
+2026-01-05 18:14:25 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): fail.com:443
+2026-01-05 18:14:25 [   DEBUG] newspaper.article - Download failed on URL https://fail.com/article because of HTTPSConnectionPool(host='fail.com', port=443): Max retries exceeded with url: /article (Caused by SSLError(SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'fail.com'. (_ssl.c:1028)")))
+2026-01-05 18:14:25 [   DEBUG] urllib3.connectionpool - Starting new HTTPS connection (1): fail.com:443
+2026-01-05 18:14:25 [   DEBUG] charset_normalizer - Encoding detection: ascii is most likely the one.
+2026-01-05 18:14:25 [   DEBUG] charset_normalizer - Encoding detection: ascii is most likely the one.
