@@ -4,7 +4,7 @@ Prompt templates for LLM interactions.
 Contains all prompt templates used by agents in the research assistant.
 """
 
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 
 
 # ============================================================================

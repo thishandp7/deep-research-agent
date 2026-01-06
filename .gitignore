@@ -39,6 +39,7 @@ env/
 .coverage
 htmlcov/
 .tox/
+tests/logs/
 
 # Data
 data/vector_db/

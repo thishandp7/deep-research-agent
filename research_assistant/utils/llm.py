@@ -8,7 +8,7 @@ Provides abstraction for LLM initialization with support for:
 
 from typing import Optional, Literal
 from langchain_community.llms import Ollama
-from langchain.llms.base import BaseLLM
+from langchain_core.language_models import BaseLLM
 
 from ..config import settings
 
