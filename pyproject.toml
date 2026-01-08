@@ -13,7 +13,7 @@ dependencies = [
     "ollama>=0.1.0",
 
     # Search & Scraping
-    "duckduckgo-search>=4.0.0",
+    "ddgs>=1.0.0",
     "beautifulsoup4>=4.12.0",
     "newspaper3k>=0.2.8",
     "requests>=2.31.0",

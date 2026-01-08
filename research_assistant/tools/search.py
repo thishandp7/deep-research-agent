@@ -5,7 +5,7 @@ Provides free web search without API keys.
 """
 
 from typing import List, Optional
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 
 from ..config import settings
 

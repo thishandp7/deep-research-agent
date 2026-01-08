@@ -244,8 +244,12 @@ def storage_node(state: ResearchState) -> Dict[str, Any]:
             }
 
         # Initialize vector store
+        # Sanitize topic for collection name (alphanumeric + underscores only)
+        safe_topic = "".join(c if c.isalnum() else "_" for c in state["topic"][:30])
+        safe_topic = safe_topic.strip("_")  # Remove leading/trailing underscores
+
         vector_store = VectorStore(
-            collection_name=f"research_{state['topic'][:30]}",
+            collection_name=f"research_{safe_topic}",
             persist_directory=str(settings.vector_db_path),
         )
 
